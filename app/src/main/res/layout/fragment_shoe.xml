@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".ShoeFragment"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/round_boarder">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:fontFamily="@font/poppins_medium"
+        android:textSize="12dp"
+        android:textColor="@color/white"
+        android:text="Shoe brand" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:fontFamily="@font/poppins_medium"
+        android:textSize="12dp"
+        android:textColor="@color/white"
+        android:text="Shoe model" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_launcher_foreground"
+
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:fontFamily="@font/poppins_medium"
+        android:textSize="12dp"
+        android:textColor="@color/white"
+        android:text="details"
+        />
+
+
+
+</LinearLayout>
