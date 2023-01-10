@@ -7,12 +7,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.sneakerfinder.R;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * A simple adapter for the shopping list.
@@ -92,7 +92,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
     // This method is called whenever a new view holder is needed (e.g. new item to show).
     @NonNull
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = inflater.inflate(R.layout.shoe, parent, false);
+        View itemView = inflater.inflate(R.layout.item_shoe, parent, false);
         return new ItemViewHolder(itemView);
     }
 

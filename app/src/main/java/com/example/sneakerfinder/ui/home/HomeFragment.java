@@ -1,21 +1,17 @@
 package com.example.sneakerfinder.ui.home;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.sneakerfinder.R;
-import com.example.sneakerfinder.ShoeFragment;
 import com.example.sneakerfinder.databinding.FragmentHomeBinding;
+
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
+import static androidx.navigation.fragment.FragmentKt.findNavController;
 
 public class HomeFragment extends Fragment {
 
@@ -28,8 +24,13 @@ public class HomeFragment extends Fragment {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        binding.btnCaptureNow.setOnClickListener(this::onCaptureBtnClick);
         return root;
     }
 
+    private void onCaptureBtnClick(View view) {
+        findNavController(this).navigate(R.id.action_home_to_scanner);
+    }
 
 }

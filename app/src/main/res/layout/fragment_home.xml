@@ -12,35 +12,43 @@
 
 
     <ImageView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="100dp"
-        android:layout_gravity="left"
-        android:src="@drawable/appicon"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_gravity="center_horizontal"
+        android:adjustViewBounds="true"
+        android:src="@drawable/appicon" />
 
-    
+
     <Button
+        android:id="@+id/btn_capture_now"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Capture Now!"
-        android:drawableTint="@color/red"
+        android:height="60dp"
         android:backgroundTint="@color/black"
-        android:drawableLeft="@android:drawable/ic_menu_camera"
-        android:drawableRight="@android:drawable/arrow_down_float"
-        android:textSize="18dp">
-
-    </Button>
+        android:drawableLeft="@drawable/camera_02_capture_red"
+        android:drawableRight="@drawable/chevron_right"
+        android:fontFamily="@font/poppins_bold"
+        android:letterSpacing="0"
+        android:text="Capture now!"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        app:cornerRadius="10dp" />
 
     <Button
+        android:id="@+id/btn_upload_from_gallery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Upload from gallery!"
         android:backgroundTint="@color/darkgrey"
-        android:drawableLeft="@android:drawable/ic_menu_upload"
-        android:drawableRight="@android:drawable/arrow_down_float"
+        android:drawableLeft="@drawable/upload_02_white"
+        android:drawableRight="@drawable/chevron_right"
         android:fontFamily="@font/poppins_medium"
-        android:textSize="14dp">
+        android:letterSpacing="0"
+        android:text="Upload from Gallery"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        android:textSize="15sp"
+        app:cornerRadius="10dp">
 
     </Button>
 
