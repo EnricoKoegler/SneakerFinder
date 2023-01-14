@@ -26,6 +26,15 @@ public class HomeFragment extends Fragment {
         View root = binding.getRoot();
 
         binding.btnCaptureNow.setOnClickListener(this::onCaptureBtnClick);
+
+        getParentFragmentManager().beginTransaction().
+                add(R.id.fragement_placeholder0, ShoeFragment.newInstance("A", "Model", R.drawable.example_shoe4, 100)).
+                add(R.id.fragement_placeholder1, ShoeFragment.newInstance("B", "Model", R.drawable.example_shoe3, 100)).
+                add(R.id.fragement_placeholder2, ShoeFragment.newInstance("C", "Model", R.drawable.example_shoe4, 100)).
+                add(R.id.fragement_placeholder3, ShoeFragment.newInstance("D", "Model", R.drawable.example_shoe4, 100)).
+                add(R.id.fragement_placeholder4, ShoeFragment.newInstance("E", "Model", R.drawable.example_shoe3, 100)).
+                commit();
+
         return root;
     }
 

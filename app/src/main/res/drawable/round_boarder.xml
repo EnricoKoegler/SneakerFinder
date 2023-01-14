@@ -11,7 +11,7 @@
     <gradient
         android:type="radial"
         android:gradientRadius="75%p"
-        android:startColor="#90CAF9"
+        android:startColor="#6FBAF7"
         android:endColor="#1A237E" />
 
     <padding

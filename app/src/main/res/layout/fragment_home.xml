@@ -4,11 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
     android:orientation="vertical"
-    android:layout_marginLeft="30dp"
-    android:layout_marginRight="30dp"
-    >
+    tools:context=".ui.home.HomeFragment">
 
 
     <ImageView
@@ -55,23 +54,26 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="30dp">
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_semibold"
             android:text="Latest Scan results"
-            android:fontFamily="@font/poppins_semibold">
-        </TextView>
+            android:textColor="@color/black"
+            android:textSize="16dp" />
 
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="->"
+            android:fontFamily="@font/poppins_semibold"
             android:gravity="right"
-            android:fontFamily="@font/poppins_semibold">
+            android:text="->"
+            android:textColor="@color/black"
+            android:textSize="16dp">
 
         </TextView>
 
@@ -79,50 +81,58 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="horizontal">
 
-        <ImageView
+        <FrameLayout
+            android:id="@+id/fragement_placeholder0"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1" />
+
+        <FrameLayout
+            android:id="@+id/fragement_placeholder1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/example_shoe">
-        </ImageView>
-        <ImageView
+            android:layout_gravity="center_vertical"
+
+            android:layout_weight="1.2" />
+
+        <FrameLayout
+            android:id="@+id/fragement_placeholder2"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:src="@drawable/example_shoe">
-        </ImageView>
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/example_shoe">
-        </ImageView>
+            android:layout_height="200dp"
+            android:layout_gravity="center_vertical"
+
+            android:layout_weight="1" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="30dp">
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_semibold"
             android:text="Further recommendations"
-            android:fontFamily="@font/poppins_semibold">
-        </TextView>
+            android:textColor="@color/black"
+            android:textSize="16dp" />
 
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="->"
             android:fontFamily="@font/poppins_semibold"
-            android:gravity="right">
+            android:gravity="right"
+            android:text="->"
+            android:textColor="@color/black"
+            android:textSize="16dp">
 
         </TextView>
 
@@ -135,20 +145,17 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <ImageView
+        <FrameLayout
+            android:id="@+id/fragement_placeholder3"
             android:layout_width="0dp"
             android:layout_height="200dp"
-            android:layout_weight="1"
-            android:src="@drawable/example_shoe">
-        </ImageView>
+            android:layout_weight="1" />
 
-        <ImageView
+        <FrameLayout
+            android:id="@+id/fragement_placeholder4"
             android:layout_width="0dp"
             android:layout_height="200dp"
-            android:layout_weight="1"
-            android:src="@drawable/example_shoe">
-        </ImageView>
-
+            android:layout_weight="1" />
 
 
     </LinearLayout>
