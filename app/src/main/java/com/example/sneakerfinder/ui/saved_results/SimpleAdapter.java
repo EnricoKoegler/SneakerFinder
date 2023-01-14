@@ -1,4 +1,4 @@
-package com.example.sneakerfinder.data;
+package com.example.sneakerfinder.ui.saved_results;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.sneakerfinder.R;
+import com.example.sneakerfinder.db.entity.Shoe;
+import com.example.sneakerfinder.db.entity.ShoeScanWithShoeScanResults;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -44,7 +47,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
     so that we can pass e.g. click events to the activity.
     */
     public interface ItemClickListener {
-        public void onItemClicked(Shoe shoe);
+        public void onItemClicked(ShoeScanWithShoeScanResults shoe);
     }
 
 
@@ -78,7 +81,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
     }
 
     private final LayoutInflater inflater;
-    private List<Shoe> shoes;
+    private List<ShoeScanWithShoeScanResults> shoeScans;
     private ItemClickListener listener;
 
     /***
@@ -98,17 +101,17 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
 
     // This method is called whenever a view holder needs content.
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-        if (shoes != null){
-            Shoe current = shoes.get(position);
-            holder.titleText.setText(current.getName());
-            holder.descText.setText(current.getDescription());
-            holder.img.setImageResource(current.getImage_id());
+        if (shoeScans != null){
+            Shoe current = shoeScans.get(position).getTopResult().shoe;
+            holder.titleText.setText(current.name);
+            holder.descText.setText(current.description);
+            Picasso.get().load(current.thumbnailUrl).into(holder.img);
         }
     }
 
     // Setter for the items list
-    public void setItems(List<Shoe> items){
-        this.shoes = items;
+    public void setItems(List<ShoeScanWithShoeScanResults> items){
+        this.shoeScans = items;
         notifyDataSetChanged();
         /* AndroidStudio will mark the above line as "inefficient". It's ok for this.
         A better solution would (also) support methods like addItem and removeItem. */
@@ -116,8 +119,8 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
 
     // Method that returns the current number of items (needed for the adapter class).
     public int getItemCount() {
-        if (shoes != null)
-            return shoes.size();
+        if (shoeScans != null)
+            return shoeScans.size();
         else return 0;
     }
 
@@ -129,7 +132,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
     // We use this method to pass on click events to the listening activity
     private void onItemClicked(int index) {
         if(this.listener != null){
-            this.listener.onItemClicked(this.shoes.get(index));
+            this.listener.onItemClicked(this.shoeScans.get(index));
         }
     }
 }

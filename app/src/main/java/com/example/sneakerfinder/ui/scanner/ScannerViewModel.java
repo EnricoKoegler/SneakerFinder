@@ -1,19 +1,26 @@
 package com.example.sneakerfinder.ui.scanner;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+import android.graphics.Bitmap;
+
 import androidx.lifecycle.ViewModel;
 
 public class ScannerViewModel extends ViewModel {
+    private boolean photoCaptureInProgress;
+    private Bitmap capturePreviewBitmap;
 
-    private final MutableLiveData<String> mText;
-
-    public ScannerViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is scanner fragment");
+    public boolean isPhotoCaptureInProgress() {
+        return photoCaptureInProgress;
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public void setPhotoCaptureInProgress(boolean photoCaptureInProgress) {
+        this.photoCaptureInProgress = photoCaptureInProgress;
+    }
+
+    public void setCapturePreviewBitmap(Bitmap capturePreviewBitmap) {
+        this.capturePreviewBitmap = capturePreviewBitmap;
+    }
+
+    public Bitmap getCapturePreviewBitmap() {
+        return capturePreviewBitmap;
     }
 }

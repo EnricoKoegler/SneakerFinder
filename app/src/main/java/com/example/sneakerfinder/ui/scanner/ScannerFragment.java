@@ -2,15 +2,21 @@ package com.example.sneakerfinder.ui.scanner;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.databinding.FragmentScannerBinding;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -28,24 +34,27 @@ public class ScannerFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        scannerViewModel = new ViewModelProvider(this).get(ScannerViewModel.class);
+        if (getActivity() == null) {
+            scannerViewModel = new ViewModelProvider(this).get(ScannerViewModel.class);
+        } else {
+            scannerViewModel = new ViewModelProvider(getActivity()).get(ScannerViewModel.class);
+        }
 
         binding = FragmentScannerBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
 
-        final TextView textView = binding.textNotifications;
-        scannerViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        return binding.getRoot();
+    }
 
-        findNavController(this).addOnDestinationChangedListener((navController, navDestination, bundle) -> {
-            if (navDestination.getId() == R.id.navigation_scanner) capturePhoto();
-        });
-
-        return root;
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!scannerViewModel.isPhotoCaptureInProgress()) capturePhoto();
     }
 
     private void capturePhoto() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         try {
+            scannerViewModel.setPhotoCaptureInProgress(true);
             capturePhotoResult.launch(takePictureIntent);
         } catch (ActivityNotFoundException e) {
             // display error state to the user
@@ -57,9 +66,35 @@ public class ScannerFragment extends Fragment {
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
+                    scannerViewModel.setPhotoCaptureInProgress(false);
 
+                    Intent data = result.getData();
+                    if (data != null) {
+                        Bundle extras = data.getExtras();
+                        scannerViewModel.setCapturePreviewBitmap((Bitmap) extras.get("data"));
+                        findNavController(ScannerFragment.this).navigate(R.id.action_scanner_to_scanner_processing);
+                    } else {
+                        findNavController(ScannerFragment.this).navigate(R.id.action_scanner_to_home);
+                    }
                 }
             });
+
+    private File createImageFile() throws IOException, ActivityNotFoundException {
+        if (getActivity() == null) throw new ActivityNotFoundException();
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        //currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
 
     @Override
     public void onDestroyView() {

@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace 'com.example.sneakerfinder'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.example.sneakerfinder"
         minSdk 21
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -40,6 +40,8 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
     implementation 'androidx.navigation:navigation-ui:2.5.3'
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'androidx.room:room-runtime:2.5.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'

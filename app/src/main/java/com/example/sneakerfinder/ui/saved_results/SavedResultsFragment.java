@@ -5,8 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.sneakerfinder.data.Shoe;
 import com.example.sneakerfinder.databinding.FragmentSavedResultsBinding;
+import com.example.sneakerfinder.db.entity.Shoe;
 
 import java.util.ArrayList;
 import java.util.List;
