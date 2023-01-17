@@ -37,5 +37,9 @@
     <fragment
         android:id="@+id/navigation_scanner_processing"
         android:name="com.example.sneakerfinder.ui.scanner.ScannerProcessingFragment"
-        android:label="ScannerProcessingFragment" />
+        android:label="ScannerProcessingFragment" >
+        <action
+            android:id="@+id/action_scanner_processing_to_home"
+            app:destination="@id/navigation_home" />
+    </fragment>
 </navigation>

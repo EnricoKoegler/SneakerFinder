@@ -26,10 +26,10 @@
     <style name="Theme.SneakerFinder.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="PoppinsTextViewStyle" parent="android:Widget.TextView">
-        <item name="android:fontFamily">@font/poppins</item>
+        <item name="android:fontFamily">@font/poppins_medium</item>
     </style>
 
     <style name="PoppinsButtonStyle" parent="android:Widget.Holo.Button">
-        <item name="android:fontFamily">@font/poppins</item>
+        <item name="android:fontFamily">@font/poppins_medium</item>
     </style>
 </resources>

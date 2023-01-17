@@ -124,6 +124,7 @@
                 android:textSize="12dp" />
 
             <Button
+                android:id="@+id/btn_buy_online"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"

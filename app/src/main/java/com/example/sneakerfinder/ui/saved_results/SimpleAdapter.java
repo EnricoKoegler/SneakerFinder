@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.db.entity.Shoe;
-import com.example.sneakerfinder.db.entity.ShoeScanWithShoeScanResults;
+import com.example.sneakerfinder.db.entity.ShoeScanWithShoes;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -47,7 +47,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
     so that we can pass e.g. click events to the activity.
     */
     public interface ItemClickListener {
-        public void onItemClicked(ShoeScanWithShoeScanResults shoe);
+        public void onItemClicked(ShoeScanWithShoes shoe);
     }
 
 
@@ -81,7 +81,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
     }
 
     private final LayoutInflater inflater;
-    private List<ShoeScanWithShoeScanResults> shoeScans;
+    private List<ShoeScanWithShoes> shoeScans;
     private ItemClickListener listener;
 
     /***
@@ -102,7 +102,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
     // This method is called whenever a view holder needs content.
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         if (shoeScans != null){
-            Shoe current = shoeScans.get(position).getTopResult().shoe;
+            Shoe current = shoeScans.get(position).shoes.get(0);
             holder.titleText.setText(current.name);
             holder.descText.setText(current.description);
             Picasso.get().load(current.thumbnailUrl).into(holder.img);
@@ -110,7 +110,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
     }
 
     // Setter for the items list
-    public void setItems(List<ShoeScanWithShoeScanResults> items){
+    public void setItems(List<ShoeScanWithShoes> items){
         this.shoeScans = items;
         notifyDataSetChanged();
         /* AndroidStudio will mark the above line as "inefficient". It's ok for this.
@@ -132,7 +132,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
     // We use this method to pass on click events to the listening activity
     private void onItemClicked(int index) {
         if(this.listener != null){
-            this.listener.onItemClicked(this.shoeScans.get(index));
+            this.listener.onItemClicked(shoeScans.get(index));
         }
     }
 }

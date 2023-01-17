@@ -6,15 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
 import com.example.sneakerfinder.ProductActivity;
 import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.databinding.FragmentSavedResultsBinding;
 import com.example.sneakerfinder.db.entity.Shoe;
-import com.example.sneakerfinder.db.entity.ShoeScanWithShoeScanResults;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.example.sneakerfinder.db.entity.ShoeScanWithShoes;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -28,15 +24,11 @@ public class SavedResultsFragment extends Fragment implements SimpleAdapter.Item
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        SavedResultsViewModel dashboardViewModel =
+        SavedResultsViewModel savedResultsViewModel =
                 new ViewModelProvider(this).get(SavedResultsViewModel.class);
 
         binding = FragmentSavedResultsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-
-
-
 
         //View view = inflater.inflate(R.layout.fragment_saved_results, container, false);
         // Create an adapter for our list:
@@ -48,8 +40,8 @@ public class SavedResultsFragment extends Fragment implements SimpleAdapter.Item
         listview.setLayoutManager(new LinearLayoutManager(root.getContext()));
 
         adapter.setItemClickListener(this);
-        //TODO set Arraylist for adapter
-        //adapter.setItems(shoes);
+
+        savedResultsViewModel.getShoeScans().observe(getViewLifecycleOwner(), adapter::setItems);
 
         return root;
     }
@@ -61,11 +53,11 @@ public class SavedResultsFragment extends Fragment implements SimpleAdapter.Item
     }
 
     @Override
-    public void onItemClicked(ShoeScanWithShoeScanResults scan) {
+    public void onItemClicked(ShoeScanWithShoes scan) {
         Intent i = new Intent(getActivity(), ProductActivity.class);
-        Shoe shoe = scan.getTopResult().shoe;
+        Shoe shoe = scan.shoes.get(0);
         i.putExtra("shoe_name", shoe.name);
-        i.putExtra("shoe_desc", shoe.description);
+        i.putExtra("shoe_desc", "");
         i.putExtra("shoe_image", shoe.thumbnailUrl);
         i.putExtra("shoe_price", shoe.price);
         startActivity(i);
