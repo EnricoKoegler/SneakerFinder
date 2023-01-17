@@ -1,55 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="10dp"
     android:orientation="horizontal"
-    android:layout_margin="30dp"
-    android:id="@+id/item_root">>
+    android:background="@drawable/shoe_item">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:minWidth="100dp"
-        android:layout_height="60dp"
         android:id="@+id/shoe_iv"
-        android:src="@drawable/ic_home_black_24dp"
-        />
-    
-    <LinearLayout
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:layout_height="60dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:minWidth="100dp"
+        android:src="@drawable/ic_home_black_24dp" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="2"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        >
-        
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:id="@+id/shoe_name"
-            android:text="Shoe name"></TextView>
-        
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:id="@+id/shoe_desc"
-            android:text="A shoe that...">
-        </TextView>
+        android:layout_marginHorizontal="40dp">
 
         <TextView
+            android:id="@+id/shoe_name"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_medium"
+            android:text="Shoe name"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/shoe_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_light"
+            android:text="A shoe that..." />
+
+        <TextView
             android:id="@+id/shoe_price"
-            android:text="200€"
-            ></TextView>
-        
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/poppins_medium"
+            android:text="200$" />
+
     </LinearLayout>
 
-    <TextView
+    <ImageView
         android:layout_width="30dp"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:textAlignment="center"
-        android:text=">">
-    </TextView>
+        android:src="@drawable/chevron_right"
+        android:clickable="true"
+        android:textAlignment="center" />
 
 </LinearLayout>

@@ -13,4 +13,5 @@
     <color name="performance_red">#F44248</color>
     <color name="greyblue">#587179</color>
     <color name="sneakerblue">#156897</color>
+    <color name="transparent">#00000000</color>
 </resources>
