@@ -16,6 +16,8 @@
             android:id="@+id/productdetail_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
             android:padding="40dp"
             android:src="@drawable/example_shoe4"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -29,10 +31,22 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="30dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:clickable="true"
             android:src="@drawable/chevron_left"
-            android:clickable="true"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/productdetail_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text=" Tap to change"
+            android:textColor="#CDFFFFFF"
+            app:drawableLeftCompat="@drawable/ic_baseline_info_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <LinearLayout
             android:layout_width="140dp"
@@ -73,14 +87,30 @@
         android:background="@drawable/product_detail"
         android:orientation="vertical"
         android:paddingHorizontal="30dp"
-        android:paddingTop="40dp">
+        android:paddingTop="10dp">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_light"
-            android:text="Your scan result:"
-            android:textSize="20sp" />
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:paddingTop="20dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/poppins_light"
+                android:text="Your scan result:"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/productdetail_brandimage"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:paddingRight="20dp"
+                android:layout_gravity="center"
+                android:layout_weight="1" />
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/productdetail_name"
@@ -91,13 +121,54 @@
             android:textColor="@color/black"
             android:textSize="42sp" />
 
-        <TextView
-            android:id="@+id/productdetail_price"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_medium"
-            android:text="Current price: 100$"
-            android:textSize="20sp" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/poppins_light"
+                android:text="Current price"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/poppins_light"
+                android:text="Release date"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/productdetail_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_weight="1"
+                android:fontFamily="@font/poppins_medium"
+                android:text="€100"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/productdetail_release_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+
+                android:fontFamily="@font/poppins_medium"
+                android:text="01/01/2000"
+                android:textSize="20sp" />
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/productdetail_description"

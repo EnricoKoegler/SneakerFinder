@@ -104,7 +104,8 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
         if (shoeScans != null){
             Shoe current = shoeScans.get(position).shoes.get(0);
             holder.titleText.setText(current.name);
-            holder.descText.setText(current.description);
+            //TODO set scan date
+            //holder.descText.setText(current.description);
             Picasso.get().load(current.thumbnailUrl).into(holder.img);
         }
     }

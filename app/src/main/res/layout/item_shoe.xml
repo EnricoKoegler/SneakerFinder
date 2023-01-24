@@ -22,7 +22,7 @@
         android:layout_weight="2"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginHorizontal="40dp">
+        android:layout_marginLeft="40dp">
 
         <TextView
             android:id="@+id/shoe_name"
@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_light"
-            android:text="A shoe that..." />
+            android:text="scanned on 01/01/2000" />
 
         <TextView
             android:id="@+id/shoe_price"

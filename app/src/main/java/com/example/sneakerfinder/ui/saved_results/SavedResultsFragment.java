@@ -55,11 +55,8 @@ public class SavedResultsFragment extends Fragment implements SimpleAdapter.Item
     @Override
     public void onItemClicked(ShoeScanWithShoes scan) {
         Intent i = new Intent(getActivity(), ProductActivity.class);
-        Shoe shoe = scan.shoes.get(0);
-        i.putExtra("shoe_name", shoe.name);
-        i.putExtra("shoe_desc", "");
-        i.putExtra("shoe_image", shoe.thumbnailUrl);
-        i.putExtra("shoe_price", shoe.price);
+        //TODO send the correct shoeID
+        i.putExtra("shoeID", 0);
         startActivity(i);
     }
 }
