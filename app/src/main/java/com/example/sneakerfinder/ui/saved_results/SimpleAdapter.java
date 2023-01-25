@@ -9,9 +9,15 @@ import android.widget.TextView;
 
 import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.db.entity.Shoe;
+import com.example.sneakerfinder.db.entity.ShoeScan;
+import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoe;
+import com.example.sneakerfinder.db.entity.ShoeScanWithShoeScanResults;
 import com.example.sneakerfinder.db.entity.ShoeScanWithShoes;
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -47,7 +53,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
     so that we can pass e.g. click events to the activity.
     */
     public interface ItemClickListener {
-        public void onItemClicked(ShoeScanWithShoes shoe);
+        public void onItemClicked(ShoeScanWithShoeScanResults shoe);
     }
 
 
@@ -81,7 +87,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
     }
 
     private final LayoutInflater inflater;
-    private List<ShoeScanWithShoes> shoeScans;
+    private List<ShoeScanWithShoeScanResults> shoeScans;
     private ItemClickListener listener;
 
     /***
@@ -99,19 +105,28 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
         return new ItemViewHolder(itemView);
     }
 
+    private static final DateFormat DATE_FORMAT = DateFormat.getDateTimeInstance();
+
     // This method is called whenever a view holder needs content.
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         if (shoeScans != null){
-            Shoe current = shoeScans.get(position).shoes.get(0);
-            holder.titleText.setText(current.name);
-            //TODO set scan date
-            //holder.descText.setText(current.description);
-            Picasso.get().load(current.thumbnailUrl).into(holder.img);
+            ShoeScanWithShoeScanResults scanWithScanResults = shoeScans.get(position);
+            Date scanDate = scanWithScanResults.shoeScan.scanDate;
+            if (scanDate != null)
+                holder.descText.setText(DATE_FORMAT.format(scanDate));
+
+            ShoeScanResultWithShoe topResult = scanWithScanResults.shoeScanResults.get(0);
+            if (topResult != null && topResult.shoe != null) {
+                Shoe shoe = topResult.shoe;
+                if (shoe.name != null) holder.titleText.setText(shoe.model);
+                if (shoe.price != null) holder.priceText.setText(shoe.price);
+                if (shoe.thumbnailUrl != null) Picasso.get().load(shoe.thumbnailUrl).into(holder.img);
+            }
         }
     }
 
     // Setter for the items list
-    public void setItems(List<ShoeScanWithShoes> items){
+    public void setItems(List<ShoeScanWithShoeScanResults> items){
         this.shoeScans = items;
         notifyDataSetChanged();
         /* AndroidStudio will mark the above line as "inefficient". It's ok for this.

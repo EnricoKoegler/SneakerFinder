@@ -13,6 +13,19 @@
         android:layout_weight="1">
 
         <ImageView
+            android:id="@+id/productdetail_image_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="40dp"
+            android:src="@drawable/example_shoe4"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
             android:id="@+id/productdetail_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -94,11 +107,11 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:paddingTop="20dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/poppins_light"
+                android:paddingTop="12dp"
                 android:text="Your scan result:"
                 android:textSize="20sp" />
 
@@ -106,9 +119,10 @@
                 android:id="@+id/productdetail_brandimage"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
-                android:paddingRight="20dp"
                 android:layout_gravity="center"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:paddingRight="20dp"
+                android:visibility="gone" />
         </LinearLayout>
 
 
@@ -119,7 +133,7 @@
             android:fontFamily="@font/poppins_medium"
             android:text="Shoe name"
             android:textColor="@color/black"
-            android:textSize="42sp" />
+            android:textSize="30sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -176,9 +190,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/poppins_medium"
-            android:gravity="center_vertical"
+            android:gravity="top|center_vertical"
+            android:paddingTop="8dp"
             android:text="Desc text"
-            android:textSize="20sp" />
+            android:textSize="16sp" />
 
         <LinearLayout
             android:layout_width="match_parent"

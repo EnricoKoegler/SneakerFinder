@@ -1,19 +1,39 @@
 package com.example.sneakerfinder.ui.home;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+import android.app.Application;
 
-public class HomeViewModel extends ViewModel {
+import com.example.sneakerfinder.db.entity.ShoeScan;
+import com.example.sneakerfinder.repo.ShoeRepository;
+import com.example.sneakerfinder.ui.scanner.ScannerViewModel;
 
-    private final MutableLiveData<String> mText;
+import java.util.Date;
 
-    public HomeViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is home fragment");
+import androidx.lifecycle.AndroidViewModel;
+
+public class HomeViewModel extends AndroidViewModel {
+    private ShoeRepository shoeRepository;
+
+    public HomeViewModel(Application application) {
+        super(application);
+
+        shoeRepository = new ShoeRepository(application);
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public void recognizeShoe(String filePath, ShoeRepository.ShoeRecognitionCallback cb) {
+        ShoeScan scan = new ShoeScan();
+        scan.scanDate = new Date();
+        scan.scanImageFilePath = filePath;
+
+        shoeRepository.recognizeShoe(scan, new ShoeRepository.ShoeRecognitionCallback() {
+            @Override
+            public void onRecognitionComplete(long shoeScanId, ShoeRepository.RecognitionQuality quality) {
+                cb.onRecognitionComplete(shoeScanId, quality);
+            }
+
+            @Override
+            public void onError(long shoeScanId) {
+                cb.onError(shoeScanId);
+            }
+        });
     }
 }

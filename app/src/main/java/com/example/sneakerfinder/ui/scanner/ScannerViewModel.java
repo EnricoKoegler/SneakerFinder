@@ -33,28 +33,23 @@ public class ScannerViewModel extends AndroidViewModel {
         currentShoeScan.scanImageFilePath = pathToImage;
     }
 
-    public void shoeScanFinished(ShoeRecognitionCallback cb) {
+    public void shoeScanFinished(ShoeRepository.ShoeRecognitionCallback cb) {
         currentShoeScan.scanDate = new Date();
 
         shoeRepository.recognizeShoe(currentShoeScan, new ShoeRepository.ShoeRecognitionCallback() {
             @Override
-            public void onRecognitionComplete(ShoeScanWithShoeScanResults scanResults) {
-                cb.onRecognitionComplete(scanResults);
+            public void onRecognitionComplete(long shoeScanId, ShoeRepository.RecognitionQuality quality) {
+                cb.onRecognitionComplete(shoeScanId, quality);
             }
 
             @Override
-            public void onError() {
-                cb.onError();
+            public void onError(long shoeScanId) {
+                cb.onError(shoeScanId);
             }
         });
     }
 
     public String getCurrentShoeScanImagePath() {
         return currentShoeScan.scanImageFilePath;
-    }
-
-    public interface ShoeRecognitionCallback {
-        void onRecognitionComplete(ShoeScanWithShoeScanResults scanResults);
-        void onError();
     }
 }

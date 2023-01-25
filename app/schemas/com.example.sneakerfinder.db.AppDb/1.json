@@ -2,17 +2,23 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "7de8e061722191e263ca8d9cea858b18",
+    "identityHash": "885eba4703997f01dc43dc20f9cfd547",
     "entities": [
       {
         "tableName": "Shoe",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`shoeId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `description` TEXT, `price` TEXT, `onlineStoreUrl` TEXT, `thumbnailUrl` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`shoeId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `styleId` TEXT, `name` TEXT, `description` TEXT, `brand` TEXT, `model` TEXT, `colorway` TEXT, `price` TEXT, `onlineStoreUrl` TEXT, `thumbnailUrl` TEXT, `releaseDate` INTEGER)",
         "fields": [
           {
             "fieldPath": "shoeId",
             "columnName": "shoeId",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "styleId",
+            "columnName": "styleId",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "name",
@@ -23,6 +29,24 @@
           {
             "fieldPath": "description",
             "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "brand",
+            "columnName": "brand",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "model",
+            "columnName": "model",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "colorway",
+            "columnName": "colorway",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -43,6 +67,12 @@
             "columnName": "thumbnailUrl",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "releaseDate",
+            "columnName": "releaseDate",
+            "affinity": "INTEGER",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -51,7 +81,17 @@
             "shoeId"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_Shoe_styleId",
+            "unique": true,
+            "columnNames": [
+              "styleId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Shoe_styleId` ON `${TABLE_NAME}` (`styleId`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
@@ -129,7 +169,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7de8e061722191e263ca8d9cea858b18')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '885eba4703997f01dc43dc20f9cfd547')"
     ]
   }
 }

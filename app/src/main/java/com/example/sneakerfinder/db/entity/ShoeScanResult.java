@@ -9,15 +9,14 @@ public class ShoeScanResult implements Comparable<ShoeScanResult> {
     public float confidence;
     public boolean isTopResult;
 
-    public ShoeScanResult(long shoeId, long shoeScanId, float confidence, boolean isTopResult) {
+    public ShoeScanResult(long shoeId, long shoeScanId, float confidence) {
         this.shoeId = shoeId;
         this.shoeScanId = shoeScanId;
         this.confidence = confidence;
-        this.isTopResult = isTopResult;
     }
 
     @Override
     public int compareTo(ShoeScanResult o) {
-        return Float.compare(this.confidence, o.confidence);
+        return Float.compare(o.confidence, this.confidence);
     }
 }

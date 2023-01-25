@@ -2,6 +2,7 @@ package com.example.sneakerfinder.ui.saved_results;
 
 import android.app.Application;
 
+import com.example.sneakerfinder.db.entity.ShoeScanWithShoeScanResults;
 import com.example.sneakerfinder.db.entity.ShoeScanWithShoes;
 import com.example.sneakerfinder.repo.ShoeRepository;
 
@@ -21,7 +22,7 @@ public class SavedResultsViewModel extends AndroidViewModel {
     }
 
 
-    public LiveData<List<ShoeScanWithShoes>> getShoeScans() {
-        return shoeRepository.getShoeScans();
+    public LiveData<List<ShoeScanWithShoeScanResults>> getShoeScans() {
+        return shoeRepository.getShoeScansWithShoeScanResults();
     }
 }

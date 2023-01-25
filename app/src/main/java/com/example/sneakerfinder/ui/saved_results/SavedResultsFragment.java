@@ -6,10 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.sneakerfinder.ProductActivity;
+import com.example.sneakerfinder.db.entity.ShoeScanWithShoeScanResults;
+import com.example.sneakerfinder.ui.scan_result.ProductActivity;
 import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.databinding.FragmentSavedResultsBinding;
-import com.example.sneakerfinder.db.entity.Shoe;
 import com.example.sneakerfinder.db.entity.ShoeScanWithShoes;
 
 import androidx.annotation.NonNull;
@@ -53,10 +53,9 @@ public class SavedResultsFragment extends Fragment implements SimpleAdapter.Item
     }
 
     @Override
-    public void onItemClicked(ShoeScanWithShoes scan) {
+    public void onItemClicked(ShoeScanWithShoeScanResults scan) {
         Intent i = new Intent(getActivity(), ProductActivity.class);
-        //TODO send the correct shoeID
-        i.putExtra("shoeID", 0);
+        i.putExtra(ProductActivity.EXTRA_SHOE_SCAN_ID, scan.shoeScan.shoeScanId);
         startActivity(i);
     }
 }

@@ -1,6 +1,8 @@
 package com.example.sneakerfinder.ui.scanner;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,13 +11,12 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
-import com.example.sneakerfinder.ProductActivity;
+import com.example.sneakerfinder.repo.ShoeRepository;
+import com.example.sneakerfinder.ui.scan_result.ProductActivity;
 import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.databinding.FragmentScannerBinding;
-import com.example.sneakerfinder.db.entity.Shoe;
-import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoe;
-import com.example.sneakerfinder.db.entity.ShoeScanWithShoeScanResults;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,11 +28,13 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import static androidx.navigation.fragment.FragmentKt.findNavController;
+import static com.example.sneakerfinder.ui.scan_result.ProductActivity.EXTRA_SHOE_SCAN_ID;
 
 public class ScannerFragment extends Fragment {
     private FragmentScannerBinding binding;
@@ -86,24 +89,24 @@ public class ScannerFragment extends Fragment {
                     Intent data = result.getData();
                     if (data != null) {
                         findNavController(ScannerFragment.this).navigate(R.id.action_scanner_to_scanner_processing);
-                        scannerViewModel.shoeScanFinished(new ScannerViewModel.ShoeRecognitionCallback() {
+                        scannerViewModel.shoeScanFinished(new ShoeRepository.ShoeRecognitionCallback() {
                             @Override
-                            public void onRecognitionComplete(ShoeScanWithShoeScanResults scanResults) {
+                            public void onRecognitionComplete(long shoeScanId, ShoeRepository.RecognitionQuality quality) {
                                 findNavController(ScannerFragment.this).navigate(R.id.action_scanner_processing_to_home);
-                                Intent i = new Intent(getActivity(), ProductActivity.class);
-                                ShoeScanResultWithShoe resultWithShoe = scanResults.getTopResult();
-                                Shoe shoe = resultWithShoe.shoe;
-                                i.putExtra("shoe_name", shoe.name);
-                                i.putExtra("shoe_desc", "");
-                                i.putExtra("shoe_image", shoe.thumbnailUrl);
-                                i.putExtra("shoe_price", shoe.price);
-                                i.putExtra("shoe_acc", resultWithShoe.shoeScanResult.confidence);
-                                startActivity(i);
+
+                                if (quality == ShoeRepository.RecognitionQuality.HIGH) {
+                                    Intent i = new Intent(getActivity(), ProductActivity.class);
+                                    i.putExtra(EXTRA_SHOE_SCAN_ID, shoeScanId);
+                                    startActivity(i);
+                                } else {
+                                    showAlertDialog(requireActivity(), "We're sorry!", "SneakersFinder could not find the shoe.", null);
+                                }
                             }
 
                             @Override
-                            public void onError() {
-
+                            public void onError(long shoeScanId) {
+                                findNavController(ScannerFragment.this).navigate(R.id.action_scanner_processing_to_home);
+                                Toast.makeText(getActivity(), "Bei der Erkennung ist ein Fehler aufgetreten", Toast.LENGTH_LONG).show();
                             }
                         });
                     } else {
@@ -129,5 +132,20 @@ public class ScannerFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    public static void showAlertDialog(Context context, String title, String message, final DialogInterface.OnClickListener onClickListener) {
+        if (context == null) return;
+        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+        alertDialog.setTitle(title);
+        if (message != null) alertDialog.setMessage(message);
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                (dialog, which) -> {
+                    if (onClickListener != null) {
+                        onClickListener.onClick(dialog, which);
+                    }
+                    dialog.dismiss();
+                });
+        alertDialog.show();
     }
 }

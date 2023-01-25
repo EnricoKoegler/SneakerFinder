@@ -15,4 +15,9 @@ public class ShoeScanResultWithShoe implements Comparable<ShoeScanResultWithShoe
     public int compareTo(ShoeScanResultWithShoe o) {
         return shoeScanResult.compareTo(o.shoeScanResult);
     }
+
+    public ShoeScanResultWithShoe(ShoeScanResult shoeScanResult, Shoe shoe) {
+        this.shoeScanResult = shoeScanResult;
+        this.shoe = shoe;
+    }
 }

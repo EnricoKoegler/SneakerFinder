@@ -16,6 +16,7 @@
         android:roundIcon="@drawable/appicon"
         android:supportsRtl="true"
         android:theme="@style/Theme.SneakerFinder"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
             android:name=".OnboardingActivity"
@@ -39,7 +40,7 @@
             android:theme="@style/Theme.SneakerFinder.NoActionBar">
         </activity>
         <activity
-            android:name=".ProductActivity"
+            android:name=".ui.scan_result.ProductActivity"
             android:exported="false"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.SneakerFinder.NoActionBar">
