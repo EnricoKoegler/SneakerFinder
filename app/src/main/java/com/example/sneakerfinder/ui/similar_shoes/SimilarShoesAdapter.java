@@ -47,15 +47,20 @@ public class SimilarShoesAdapter extends RecyclerView.Adapter<SimilarShoesAdapte
     }
 
     private final LayoutInflater inflater;
+    private final SimilarShoesActivity.ActivityStyle activityStyle;
     private List<ShoeScanResultWithShoe> shoeScans;
     private ItemClickListener listener;
 
-    public SimilarShoesAdapter(Context context) {
+    public SimilarShoesAdapter(Context context, SimilarShoesActivity.ActivityStyle activityStyle) {
         inflater = LayoutInflater.from(context);
+        this.activityStyle = activityStyle;
     }
 
     @NonNull
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        /* TODO: change layout for view holders,
+            maybe use activityStyle to distinguish between SimilarShoes and RecommendedShoes design
+         */
         View itemView = inflater.inflate(R.layout.item_shoe, parent, false);
         return new ItemViewHolder(itemView);
     }
@@ -63,6 +68,9 @@ public class SimilarShoesAdapter extends RecyclerView.Adapter<SimilarShoesAdapte
     private static final DateFormat DATE_FORMAT = DateFormat.getDateTimeInstance();
 
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
+         /* TODO: change view binding for better experience,
+             maybe use activityStyle to distinguish between SimilarShoes and RecommendedShoes design
+         */
         if (shoeScans != null){
             ShoeScanResultWithShoe shoeScanResultWithShoe = shoeScans.get(position);
             ShoeScanResult shoeScanResult = shoeScanResultWithShoe.shoeScanResult;

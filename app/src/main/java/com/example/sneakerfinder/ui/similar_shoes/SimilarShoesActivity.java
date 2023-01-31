@@ -29,15 +29,17 @@ public class SimilarShoesActivity extends AppCompatActivity implements SimilarSh
         binding = FragmentSavedResultsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // If shoeScanId == null -> activity type = recommended shoes
-        // else -> activity type = similar shoes
         Long shoeScanId = getIntent().getLongExtra(EXTRA_SHOE_SCAN_ID, -1);
         if (shoeScanId == -1) shoeScanId = null;
 
-        if (shoeScanId == null) binding.savedResultsTitle.setText(R.string.recommended_shoes);
+        ActivityStyle activityStyle;
+        if (shoeScanId == null) activityStyle = ActivityStyle.RECOMMENDED_SHOES;
+        else activityStyle = ActivityStyle.SIMILAR_SHOES;
+
+        if (activityStyle == ActivityStyle.RECOMMENDED_SHOES) binding.savedResultsTitle.setText(R.string.recommended_shoes);
         else binding.savedResultsTitle.setText(R.string.similar_shoes);
 
-        SimilarShoesAdapter adapter = new SimilarShoesAdapter(this);
+        SimilarShoesAdapter adapter = new SimilarShoesAdapter(this, activityStyle);
         binding.shoeListView.setAdapter(adapter);
         binding.shoeListView.setLayoutManager(new LinearLayoutManager(this));
         adapter.setItemClickListener(this);
@@ -57,4 +59,6 @@ public class SimilarShoesActivity extends AppCompatActivity implements SimilarSh
         i.putExtra(ProductActivity.EXTRA_SHOE_ID, shoe.shoe.shoeId);
         startActivity(i);
     }
+
+    enum ActivityStyle {RECOMMENDED_SHOES, SIMILAR_SHOES}
 }
