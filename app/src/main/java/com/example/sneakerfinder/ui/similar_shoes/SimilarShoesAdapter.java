@@ -1,6 +1,8 @@
 package com.example.sneakerfinder.ui.similar_shoes;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,7 +79,12 @@ public class SimilarShoesAdapter extends RecyclerView.Adapter<SimilarShoesAdapte
             Shoe shoe = shoeScanResultWithShoe.shoe;
 
             if (shoeScanResult != null) {
-                holder.descText.setText(String.format("%.0f%%", shoeScanResult.confidence * 100));
+                holder.descText.setText(String.format("Accuracy: %.0f%%", shoeScanResult.confidence * 100));
+                holder.descText.setTypeface(null, Typeface.BOLD);
+                if(shoeScanResult.confidence > 0.0) holder.descText.setTextColor(Color.RED);
+                if(shoeScanResult.confidence > 0.1) holder.descText.setTextColor(Color.rgb(255, 165, 0));
+                if(shoeScanResult.confidence > 0.5) holder.descText.setTextColor(Color.GREEN);
+
             }
 
             if (shoe != null) {
