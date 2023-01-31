@@ -36,7 +36,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <ImageView
             android:id="@+id/productdetail_back"
@@ -216,7 +216,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
                 android:layout_weight="1"
-                android:backgroundTint="#156897"
+                android:backgroundTint="#223189"
                 android:fontFamily="@font/poppins_medium"
                 android:text="Buy online"
                 android:textColor="@color/white"
