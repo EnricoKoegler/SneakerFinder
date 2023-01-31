@@ -7,7 +7,7 @@
     android:layout_marginLeft="20dp"
     android:layout_marginRight="20dp"
     android:orientation="vertical"
-    tools:context=".ui.home.HomeFragment">
+    tools:context=".ui.main_activity.home.HomeFragment">
 
 
     <ImageView
@@ -52,6 +52,7 @@
     </Button>
 
     <LinearLayout
+        android:id="@+id/latest_scan_results_divider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
@@ -111,6 +112,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/further_recommendations_divider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"

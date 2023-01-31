@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.sneakerfinder.ui.main_activity.MainActivity;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class OnboardingActivity extends AppCompatActivity {

@@ -1,4 +1,4 @@
-package com.example.sneakerfinder.ui.saved_results;
+package com.example.sneakerfinder.ui.main_activity.saved_results;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,14 +9,11 @@ import android.widget.TextView;
 
 import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.db.entity.Shoe;
-import com.example.sneakerfinder.db.entity.ShoeScan;
 import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoe;
 import com.example.sneakerfinder.db.entity.ShoeScanWithShoeScanResults;
-import com.example.sneakerfinder.db.entity.ShoeScanWithShoes;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -46,7 +43,7 @@ import androidx.recyclerview.widget.RecyclerView;
  *    to work, we implement some interfaces and listeners.
  */
 
-public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHolder> {
+public class SavedResultsAdapter extends RecyclerView.Adapter<SavedResultsAdapter.ItemViewHolder> {
 
     /*
     Interface that the activity using this adapter's recycler view should implement
@@ -81,7 +78,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
         @Override
         public void onClick(View v) {
             // pass on the click to the adapter (which passes it on to the activity/listener)
-            SimpleAdapter.this.onItemClicked(this.getLayoutPosition());
+            SavedResultsAdapter.this.onItemClicked(this.getLayoutPosition());
         }
 
     }
@@ -94,7 +91,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
      * Constructor.
      * @param context Application context, as required by Android.
      */
-    public SimpleAdapter(Context context) {
+    public SavedResultsAdapter(Context context) {
         inflater = LayoutInflater.from(context);
     }
 

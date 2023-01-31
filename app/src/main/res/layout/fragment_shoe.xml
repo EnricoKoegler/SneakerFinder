@@ -6,7 +6,7 @@
     android:layout_gravity="center_horizontal"
     android:background="@drawable/round_boarder"
     android:orientation="vertical"
-    tools:context=".ui.home.ShoeFragment"
+    tools:context=".ui.main_activity.home.ShoeFragment"
     android:layout_margin="5dp">
 
 

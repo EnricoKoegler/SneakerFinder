@@ -4,40 +4,46 @@ import android.app.Application;
 
 import com.example.sneakerfinder.db.entity.ShoeScan;
 import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoe;
+import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoeAndScan;
 import com.example.sneakerfinder.repo.ShoeRepository;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
-public class ScanResultViewModel extends AndroidViewModel {
+public class ScanResultViewModel extends ViewModel {
     private final ShoeRepository shoeRepository;
-    private final MutableLiveData<Long> scanId = new MutableLiveData<>();
+    private final long shoeScanId;
+    private final long shoeId;
 
-    public ScanResultViewModel(@NonNull Application application) {
-        super(application);
-        shoeRepository = new ShoeRepository(application);
+    public ScanResultViewModel(ShoeRepository shoeRepository, long shoeScanId, long shoeId) {
+        this.shoeRepository = shoeRepository;
+        this.shoeScanId = shoeScanId;
+        this.shoeId = shoeId;
     }
 
-    public void setScanId(long scanId) {
-        this.scanId.setValue(scanId);
+    public LiveData<ShoeScanResultWithShoeAndScan> getShoeScanResult() {
+        return shoeRepository.getShoeScanResult(shoeScanId, shoeId);
     }
 
-    public LiveData<ShoeScan> getShoeScan() {
-        return Transformations.switchMap(scanId, scanIdValue -> {
-            if (scanIdValue == null) return new MutableLiveData<>();
-            else return shoeRepository.getShoeScan(scanIdValue);
-        });
-    }
+    static class Factory implements ViewModelProvider.Factory {
+        private final Application application;
+        private final long shoeScanId;
+        private final long shoeId;
 
-    public LiveData<List<ShoeScanResultWithShoe>> getShoeScanResults() {
-        return Transformations.switchMap(scanId, scanIdValue -> {
-            if (scanIdValue == null) return new MutableLiveData<>();
-            else return shoeRepository.getShoeScanResults(scanIdValue);
-        });
+        public Factory(Application application, long shoeScanId, long shoeId) {
+            this.application = application;
+            this.shoeScanId = shoeScanId;
+            this.shoeId =  shoeId;
+        }
+
+        @NonNull
+        @Override
+        public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+            return (T) new ScanResultViewModel(new ShoeRepository(application), shoeScanId, shoeId);
+        }
     }
 }

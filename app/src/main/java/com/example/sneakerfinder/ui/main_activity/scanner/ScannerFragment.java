@@ -1,4 +1,4 @@
-package com.example.sneakerfinder.ui.scanner;
+package com.example.sneakerfinder.ui.main_activity.scanner;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.sneakerfinder.repo.ShoeRepository;
+import com.example.sneakerfinder.ui.scan_processing.ScanProcessingActivity;
 import com.example.sneakerfinder.ui.scan_result.ProductActivity;
 import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.databinding.FragmentScannerBinding;
@@ -40,6 +41,8 @@ public class ScannerFragment extends Fragment {
     private FragmentScannerBinding binding;
     private ScannerViewModel scannerViewModel;
 
+    private Uri photoUri;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         scannerViewModel = new ViewModelProvider(requireActivity()).get(ScannerViewModel.class);
@@ -62,7 +65,7 @@ public class ScannerFragment extends Fragment {
             File photoFile = createImageFile();
 
             // Put photoUri as extra for the Intent
-            Uri photoUri = FileProvider.getUriForFile(
+            photoUri = FileProvider.getUriForFile(
                     requireActivity(),
                     "com.example.sneakerfinder.fileprovider",
                     photoFile
@@ -70,7 +73,6 @@ public class ScannerFragment extends Fragment {
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
 
             scannerViewModel.setPhotoCaptureInProgress(true);
-            scannerViewModel.startShoeScan(photoFile.getAbsolutePath());
             capturePhotoResult.launch(takePictureIntent);
         } catch (ActivityNotFoundException e) {
             // TODO: display error state to the user
@@ -88,64 +90,28 @@ public class ScannerFragment extends Fragment {
 
                     Intent data = result.getData();
                     if (data != null) {
-                        findNavController(ScannerFragment.this).navigate(R.id.action_scanner_to_scanner_processing);
-                        scannerViewModel.shoeScanFinished(new ShoeRepository.ShoeRecognitionCallback() {
-                            @Override
-                            public void onRecognitionComplete(long shoeScanId, ShoeRepository.RecognitionQuality quality) {
-                                findNavController(ScannerFragment.this).navigate(R.id.action_scanner_processing_to_home);
-
-                                if (quality == ShoeRepository.RecognitionQuality.HIGH) {
-                                    Intent i = new Intent(getActivity(), ProductActivity.class);
-                                    i.putExtra(EXTRA_SHOE_SCAN_ID, shoeScanId);
-                                    startActivity(i);
-                                } else {
-                                    showAlertDialog(requireActivity(), "We're sorry!", "SneakersFinder could not find the shoe.", null);
-                                }
-                            }
-
-                            @Override
-                            public void onError(long shoeScanId) {
-                                findNavController(ScannerFragment.this).navigate(R.id.action_scanner_processing_to_home);
-                                Toast.makeText(getActivity(), "Bei der Erkennung ist ein Fehler aufgetreten", Toast.LENGTH_LONG).show();
-                            }
-                        });
+                        Intent i = new Intent(getActivity(), ScanProcessingActivity.class);
+                        i.setData(photoUri);
+                        startActivity(i);
                     } else {
-                        findNavController(ScannerFragment.this).navigate(R.id.action_scanner_to_home);
+                        findNavController(ScannerFragment.this).navigateUp();
                     }
                 }
             });
 
     private File createImageFile() throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
+        File storageDir = requireActivity().getExternalCacheDir();
+
+        return File.createTempFile(
+                "SneakerFinderCameraScan",  /* prefix */
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
-
-        return image;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-    }
-
-    public static void showAlertDialog(Context context, String title, String message, final DialogInterface.OnClickListener onClickListener) {
-        if (context == null) return;
-        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-        alertDialog.setTitle(title);
-        if (message != null) alertDialog.setMessage(message);
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
-                (dialog, which) -> {
-                    if (onClickListener != null) {
-                        onClickListener.onClick(dialog, which);
-                    }
-                    dialog.dismiss();
-                });
-        alertDialog.show();
     }
 }

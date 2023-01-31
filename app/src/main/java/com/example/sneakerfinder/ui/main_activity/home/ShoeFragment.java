@@ -1,4 +1,4 @@
-package com.example.sneakerfinder.ui.home;
+package com.example.sneakerfinder.ui.main_activity.home;
 
 
 import android.os.Bundle;

@@ -113,8 +113,10 @@ public class ShoeRepository {
         if (result.objects.get(0).confidence < RECOGNITION_THRESHOLD) {
             throw new LowAccuracyResultException();
         } else {
-            for (ShoeRecognitionResultObject o: result.objects) {
-                processRecognitionResult(shoeScan.shoeScanId, o.title, o.confidence);
+            List<ShoeRecognitionResultObject> objects = result.objects;
+            for (int i = 0; i < objects.size(); i++) {
+                ShoeRecognitionResultObject o = objects.get(i);
+                processRecognitionResult(shoeScan.shoeScanId, o.title, o.confidence, i == 0);
             }
         }
     }
@@ -135,13 +137,15 @@ public class ShoeRepository {
         } else {
             for (int i = 0; i < NUMBER_OF_RESULTS; i++) {
                 ClassificationResult r = classificationResults.get(i);
-                processRecognitionResult(shoeScan.shoeScanId, r.getClassName(), r.getAccuracy());
+                processRecognitionResult(shoeScan.shoeScanId, r.getClassName(), r.getAccuracy(), i == 0);
+                Log.d("RESULT", r.toString());
             }
         }
     }
 
     // TODO: Add transaction
-    private void processRecognitionResult(long shoeScanId, String shoeName, float confidence) {
+    private void processRecognitionResult(long shoeScanId, String shoeName,
+                                          float confidence, boolean isTopResult) {
         Shoe shoe;
         try {
             shoe = searchShoe(shoeName);
@@ -155,7 +159,7 @@ public class ShoeRepository {
         shoe.shoeId = shoeDao.insertShoe(shoe);
 
         ShoeScanResult scanResult =
-                new ShoeScanResult(shoe.shoeId, shoeScanId, confidence);
+                new ShoeScanResult(shoe.shoeId, shoeScanId, confidence, isTopResult);
         shoeDao.insertShoeScanResult(scanResult);
     }
 
@@ -221,8 +225,20 @@ public class ShoeRepository {
         return shoeDao.getShoeScanResultsWithShoes(shoeScanId);
     }
 
-    public LiveData<ShoeScan> getShoeScan(long shoeScanId) {
-        return shoeDao.getShoeScan(shoeScanId);
+    public LiveData<List<ShoeScanResultWithShoe>> getSimilarShoes(long shoeScanId) {
+        return shoeDao.getSimilarShoes(shoeScanId);
+    }
+
+    public LiveData<List<ShoeScanResultWithShoe>> getRecommendedShoes() {
+        return shoeDao.getRecommendedShoes();
+    }
+
+    public LiveData<ShoeScanResultWithShoeAndScan> getShoeScanResult(long shoeScanId, long shoeId) {
+        return shoeDao.getShoeScanResult(shoeScanId, shoeId);
+    }
+
+    public LiveData<ShoeScanResult> getTopResult(long shoeScanId) {
+        return shoeDao.getTopResult(shoeScanId);
     }
 
     public enum RecognitionQuality {NO_SHOE_RECOGNIZED, LOW, HIGH}

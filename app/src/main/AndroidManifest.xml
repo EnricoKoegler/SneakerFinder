@@ -34,13 +34,30 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.main_activity.MainActivity"
             android:exported="false"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.SneakerFinder.NoActionBar">
         </activity>
         <activity
             android:name=".ui.scan_result.ProductActivity"
+            android:exported="false"
+            android:label="@string/title_activity_main"
+            android:theme="@style/Theme.SneakerFinder.NoActionBar">
+        </activity>
+        <activity
+            android:name=".ui.scan_processing.ScanProcessingActivity"
+            android:exported="true"
+            android:label="@string/title_activity_main"
+            android:theme="@style/Theme.SneakerFinder.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.similar_shoes.SimilarShoesActivity"
             android:exported="false"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.SneakerFinder.NoActionBar">

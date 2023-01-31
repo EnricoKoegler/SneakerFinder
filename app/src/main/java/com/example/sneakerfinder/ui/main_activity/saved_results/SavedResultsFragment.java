@@ -1,4 +1,4 @@
-package com.example.sneakerfinder.ui.saved_results;
+package com.example.sneakerfinder.ui.main_activity.saved_results;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,15 +10,17 @@ import com.example.sneakerfinder.db.entity.ShoeScanWithShoeScanResults;
 import com.example.sneakerfinder.ui.scan_result.ProductActivity;
 import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.databinding.FragmentSavedResultsBinding;
-import com.example.sneakerfinder.db.entity.ShoeScanWithShoes;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class SavedResultsFragment extends Fragment implements SimpleAdapter.ItemClickListener{
+import static androidx.navigation.fragment.FragmentKt.findNavController;
+
+public class SavedResultsFragment extends Fragment implements SavedResultsAdapter.ItemClickListener{
 
     private FragmentSavedResultsBinding binding;
 
@@ -32,7 +34,7 @@ public class SavedResultsFragment extends Fragment implements SimpleAdapter.Item
 
         //View view = inflater.inflate(R.layout.fragment_saved_results, container, false);
         // Create an adapter for our list:
-        SimpleAdapter adapter = new SimpleAdapter(root.getContext());
+        SavedResultsAdapter adapter = new SavedResultsAdapter(root.getContext());
 
         // Set the adapter to be used by the ListView:
         RecyclerView listview = root.findViewById(R.id.shoe_list_view);
@@ -56,6 +58,7 @@ public class SavedResultsFragment extends Fragment implements SimpleAdapter.Item
     public void onItemClicked(ShoeScanWithShoeScanResults scan) {
         Intent i = new Intent(getActivity(), ProductActivity.class);
         i.putExtra(ProductActivity.EXTRA_SHOE_SCAN_ID, scan.shoeScan.shoeScanId);
+        i.putExtra(ProductActivity.EXTRA_SHOE_ID, scan.shoeScanResults.get(0).shoe.shoeId);
         startActivity(i);
     }
 }

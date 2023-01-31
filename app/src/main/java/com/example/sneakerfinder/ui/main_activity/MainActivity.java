@@ -1,7 +1,8 @@
-package com.example.sneakerfinder;
+package com.example.sneakerfinder.ui.main_activity;
 
 import android.os.Bundle;
 
+import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -31,13 +32,5 @@ public class MainActivity extends AppCompatActivity {
                 R.id.navigation_home, R.id.navigation_saved_results, R.id.navigation_scanner)
                 .build();
         NavigationUI.setupWithNavController(navView, navController);
-
-        navController.addOnDestinationChangedListener((navController1, navDestination, bundle) -> {
-            if (navDestination.getId() == R.id.navigation_scanner_processing) {
-                navController.enableOnBackPressed(false);
-            } else {
-                navController.enableOnBackPressed(true);
-            }
-        });
     }
 }

@@ -35,6 +35,15 @@ public interface ShoeDao {
     @Query("SELECT * FROM ShoeScanResult WHERE shoeScanId = :shoeScanId ORDER BY confidence DESC")
     LiveData<List<ShoeScanResultWithShoe>> getShoeScanResultsWithShoes(long shoeScanId);
 
+    @Transaction
+    @Query("SELECT * FROM ShoeScanResult WHERE shoeScanId = :shoeScanId AND isTopResult = 0 ORDER BY confidence DESC")
+    LiveData<List<ShoeScanResultWithShoe>> getSimilarShoes(long shoeScanId);
+
+    @Transaction
+    @Query("SELECT * FROM ShoeScanResult WHERE isTopResult = 0 AND confidence > 0.2 ORDER BY confidence DESC LIMIT 50")
+    LiveData<List<ShoeScanResultWithShoe>> getRecommendedShoes();
+
+    @Transaction
     @Query("SELECT * FROM ShoeScanResult WHERE shoeScanId = :shoeScanId ORDER BY confidence DESC")
     List<ShoeScanResultWithShoe> getShoeScanResults(long shoeScanId);
 
@@ -46,6 +55,10 @@ public interface ShoeDao {
     @Query("SELECT * FROM ShoeScanResult ORDER BY confidence DESC")
     LiveData<List<ShoeScanResultWithShoeAndScan>> getShoeScanResultsWithShoesAndScans();
 
-    @Query("SELECT * FROM ShoeScan WHERE shoeScanId = :shoeScanId")
-    LiveData<ShoeScan> getShoeScan(long shoeScanId);
+    @Transaction
+    @Query("SELECT * FROM ShoeScanResult WHERE shoeScanId = :shoeScanId AND shoeId = :shoeId")
+    LiveData<ShoeScanResultWithShoeAndScan> getShoeScanResult(long shoeScanId, long shoeId);
+
+    @Query("SELECT * FROM ShoeScanResult WHERE shoeScanId = :shoeScanId AND isTopResult = 1")
+    LiveData<ShoeScanResult> getTopResult(long shoeScanId);
 }

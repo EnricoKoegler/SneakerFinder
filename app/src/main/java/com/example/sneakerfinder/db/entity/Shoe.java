@@ -3,6 +3,7 @@ package com.example.sneakerfinder.db.entity;
 import java.util.Date;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
@@ -21,6 +22,7 @@ public class Shoe {
     public String thumbnailUrl;
     public Date releaseDate;
 
+    @Ignore
     public Shoe(String name, String description, String price, String onlineStoreUrl, String thumbnailUrl) {
         this.name = name;
         this.description = description;

@@ -1,9 +1,8 @@
-package com.example.sneakerfinder.ui.saved_results;
+package com.example.sneakerfinder.ui.main_activity.saved_results;
 
 import android.app.Application;
 
 import com.example.sneakerfinder.db.entity.ShoeScanWithShoeScanResults;
-import com.example.sneakerfinder.db.entity.ShoeScanWithShoes;
 import com.example.sneakerfinder.repo.ShoeRepository;
 
 import java.util.List;

@@ -3,24 +3,30 @@ package com.example.sneakerfinder.ui.scan_result;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.databinding.ActivityProductBinding;
 import com.example.sneakerfinder.db.entity.Shoe;
+import com.example.sneakerfinder.db.entity.ShoeScan;
 import com.example.sneakerfinder.db.entity.ShoeScanResult;
 import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoe;
+import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoeAndScan;
+import com.example.sneakerfinder.ui.similar_shoes.SimilarShoesActivity;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 public class ProductActivity extends AppCompatActivity {
     public static final String EXTRA_SHOE_SCAN_ID = "EXTRA_SHOE_SCAN_ID";
+    public static final String EXTRA_SHOE_ID = "EXTRA_SHOE_ID";
 
     private ScanResultViewModel scanResultViewModel;
     private String onlineStoreUrl;
@@ -33,43 +39,52 @@ public class ProductActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         binding.productdetailImageBack.setVisibility(View.GONE);
 
-        scanResultViewModel = new ViewModelProvider(this).get(ScanResultViewModel.class);
-
         // Get data from intent
         Intent i = getIntent();
-        long shoeId = i.getLongExtra(EXTRA_SHOE_SCAN_ID, -1);
+        long shoeScanId = i.getLongExtra(EXTRA_SHOE_SCAN_ID, -1);
+        long shoeId = i.getLongExtra(EXTRA_SHOE_ID, -1);
 
-        if (shoeId != -1) scanResultViewModel.setScanId(shoeId);
+        if (shoeScanId == -1 || shoeId == -1) {
+            Log.e("IntentError", "Missing intent extras");
+        }
 
-        scanResultViewModel.getShoeScan().observe(this, scan -> {
-            if (scan.scanImageFilePath != null)
-                Picasso.get().load("file://" + scan.scanImageFilePath).into(binding.productdetailImageBack);
-        });
+        scanResultViewModel = new ViewModelProvider(
+                this,
+                new ScanResultViewModel.Factory(getApplication(), shoeScanId, shoeId)
+        ).get(ScanResultViewModel.class);
 
-        scanResultViewModel.getShoeScanResults().observe(this, shoeScanResultWithShoes -> {
-            ShoeScanResultWithShoe shoeScanResultWithShoe = shoeScanResultWithShoes.get(0); // Get top result
+        scanResultViewModel.getShoeScanResult().observe(this, shoeScanResultWithShoeAndScan -> {
+            Shoe shoe = shoeScanResultWithShoeAndScan.shoe;
+            if (shoe != null) {
+                if (shoe.name != null)
+                    binding.productdetailName.setText(shoe.name);
+                if (shoe.onlineStoreUrl != null)
+                    this.onlineStoreUrl = shoe.onlineStoreUrl;
+                if (shoe.releaseDate != null)
+                    binding.productdetailReleaseDate.setText(DateFormat.getDateInstance(DateFormat.SHORT).format(shoe.releaseDate));
+                if (shoe.price != null)
+                    binding.productdetailPrice.setText(shoe.price);
+                if (shoe.description != null)
+                    binding.productdetailDescription.setText(shoe.description);
+                if (shoe.thumbnailUrl != null)
+                    Picasso.get().load(shoe.thumbnailUrl).into(binding.productdetailImage);
 
-            if (shoeScanResultWithShoe != null) {
-                ShoeScanResult result = shoeScanResultWithShoe.shoeScanResult;
-                if (result != null) {
-                    binding.productdetailAccuracy.setText(String.format("%.0f%%", result.confidence * 100));
+                if (shoe.onlineStoreUrl == null && shoe.name != null)
+                    onlineStoreUrl = "https://www.amazon.de/s?k=" + shoe.name;
+                else if (shoe.onlineStoreUrl != null) {
+                    onlineStoreUrl = shoe.onlineStoreUrl;
                 }
+            }
 
-                Shoe shoe = shoeScanResultWithShoe.shoe;
-                if (shoe != null) {
-                    if (shoe.name != null)
-                        binding.productdetailName.setText(shoe.name);
-                    if (shoe.onlineStoreUrl != null)
-                        this.onlineStoreUrl = shoe.onlineStoreUrl;
-                    if (shoe.releaseDate != null)
-                        binding.productdetailReleaseDate.setText(DateFormat.getDateInstance(DateFormat.SHORT).format(shoe.releaseDate));
-                    if (shoe.price != null)
-                        binding.productdetailPrice.setText(shoe.price);
-                    if (shoe.description != null)
-                        binding.productdetailDescription.setText(shoe.description);
-                    if (shoe.thumbnailUrl != null)
-                        Picasso.get().load(shoe.thumbnailUrl).into(binding.productdetailImage);
-                }
+            ShoeScan scan = shoeScanResultWithShoeAndScan.shoeScan;
+            if (scan != null) {
+                if (scan.scanImageFilePath != null)
+                    Picasso.get().load("file://" + scan.scanImageFilePath).into(binding.productdetailImageBack);
+            }
+
+            ShoeScanResult result = shoeScanResultWithShoeAndScan.shoeScanResult;
+            if (result != null) {
+                binding.productdetailAccuracy.setText(String.format("%.0f%%", result.confidence * 100));
             }
         });
 
@@ -83,28 +98,20 @@ public class ProductActivity extends AppCompatActivity {
             binding.productdetailImageBack.setVisibility(View.GONE);
         });
 
-        View buyOnlineBtn = findViewById(R.id.btn_buy_online);
-        buyOnlineBtn.setOnClickListener(view -> {
-            List<ShoeScanResultWithShoe> resultList = scanResultViewModel.getShoeScanResults().getValue();
-            if (resultList != null && resultList.get(0) != null) {
-                Shoe shoe = resultList.get(0).shoe;
-                if (shoe != null) {
-                    String url = null;
-                    if (shoe.onlineStoreUrl == null && shoe.name != null)
-                        url = "https://www.amazon.de/s?k=" + shoe.name;
-                    else if (shoe.onlineStoreUrl != null) {
-                        url = shoe.onlineStoreUrl;
-                    }
-                    if (url != null) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse(url));
-                        startActivity(intent);
-                    }
-                }
+        binding.btnSimilarShoes.setOnClickListener(view -> {
+            Intent intent = new Intent(this, SimilarShoesActivity.class);
+            intent.putExtra(ProductActivity.EXTRA_SHOE_SCAN_ID, shoeScanId);
+            startActivity(intent);
+        });
+
+        binding.btnBuyOnline.setOnClickListener(view -> {
+            if (onlineStoreUrl != null) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(onlineStoreUrl));
+                startActivity(intent);
             }
         });
 
-        ImageView back_button = findViewById(R.id.productdetail_back);
-        back_button.setOnClickListener(view -> finish());
+        binding.productdetailBack.setOnClickListener(view -> finish());
     }
 }
