@@ -6,19 +6,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.sneakerfinder.db.entity.ShoeScanWithShoeScanResults;
-import com.example.sneakerfinder.ui.scan_result.ProductActivity;
 import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.databinding.FragmentSavedResultsBinding;
+import com.example.sneakerfinder.db.entity.ShoeScanWithShoeScanResults;
+import com.example.sneakerfinder.ui.scan_result.ProductActivity;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import static androidx.navigation.fragment.FragmentKt.findNavController;
 
 public class SavedResultsFragment extends Fragment implements SavedResultsAdapter.ItemClickListener{
 
@@ -43,7 +40,14 @@ public class SavedResultsFragment extends Fragment implements SavedResultsAdapte
 
         adapter.setItemClickListener(this);
 
-        savedResultsViewModel.getShoeScans().observe(getViewLifecycleOwner(), adapter::setItems);
+        savedResultsViewModel.getShoeScans().observe(getViewLifecycleOwner(), shoeScanWithShoeScanResults -> {
+            if (shoeScanWithShoeScanResults.size() == 0) {
+
+            } else {
+
+            }
+            adapter.setItems(shoeScanWithShoeScanResults);
+        });
 
         return root;
     }

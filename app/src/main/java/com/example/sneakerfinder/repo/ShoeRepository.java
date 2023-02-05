@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Log;
 
+import com.example.sneakerfinder.data.ClassificationResult;
 import com.example.sneakerfinder.db.AppDb;
 import com.example.sneakerfinder.db.dao.ShoeDao;
 import com.example.sneakerfinder.db.entity.Shoe;
@@ -14,19 +15,13 @@ import com.example.sneakerfinder.db.entity.ShoeScanResult;
 import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoe;
 import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoeAndScan;
 import com.example.sneakerfinder.db.entity.ShoeScanWithShoeScanResults;
-import com.example.sneakerfinder.db.entity.ShoeScanWithShoes;
-import com.example.sneakerfinder.exception.LowAccuracyResultException;
 import com.example.sneakerfinder.exception.NotFoundException;
+import com.example.sneakerfinder.helper.SneakersClassifier;
 import com.example.sneakerfinder.helper.ThreadHelper;
-import com.example.sneakerfinder.ml.ClassificationResult;
-import com.example.sneakerfinder.ml.SneakersClassifier;
 import com.example.sneakerfinder.network.RestClient;
-import com.example.sneakerfinder.network.aws.dto.ShoeRecognitionResult;
-import com.example.sneakerfinder.network.aws.dto.ShoeRecognitionResultObject;
+import com.example.sneakerfinder.network.aws.dto.ShoeCropping;
 import com.example.sneakerfinder.network.sneaks.SneaksAdapter;
 import com.example.sneakerfinder.network.sneaks.dto.SneaksProduct;
-
-import org.checkerframework.checker.units.qual.A;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -37,9 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -66,35 +59,116 @@ public class ShoeRepository {
     }
 
     private static final boolean USE_ONLINE_RECOGNITION = false;
+    private static final boolean USE_ONLINE_IMAGE_CROPPING = true;
+
+    private static final int NUMBER_OF_RESULTS = 10;
+    private static final float LOW_ACCURACY_THRESHOLD = 0.2f;
+    private static final float HIGH_ACCURACY_THRESHOLD = 0.6f;
+
 
     public void recognizeShoe(ShoeScan shoeScan, ShoeRecognitionCallback cb) {
         ThreadHelper.getExecutor().execute(() -> {
-            shoeScan.shoeScanId = shoeDao.insertShoeScan(shoeScan);
+            Bitmap bitmap = BitmapFactory.decodeFile(shoeScan.scanImageFilePath);
 
-            boolean success = false;
+            if (USE_ONLINE_IMAGE_CROPPING) {
+                try {
+                    bitmap = cropImageOnline(bitmap);
+                } catch (Exception e) {
+                    Log.e("REST", "Online image cropping did not work");
+                }
+            }
+
+            List<ClassificationResult> classificationResults = null;
             try {
                 if (USE_ONLINE_RECOGNITION) {
-                    recognizeShoeOnline(shoeScan);
-                    success = true;
+                    classificationResults = recognizeShoeOnline(bitmap);
                 }
             } catch (Exception e) {
-                Log.d("REST", "Could not recognize shoe online");
+                Log.e("REST", "Could not recognize shoe online");
             }
 
             try {
-                if (!success) recognizeShoeOffline(shoeScan);
-
-                ThreadHelper.getHandler().post(() -> cb.onRecognitionComplete(shoeScan.shoeScanId, RecognitionQuality.HIGH));
-            } catch (LowAccuracyResultException e) {
-                ThreadHelper.getHandler().post(() -> cb.onRecognitionComplete(shoeScan.shoeScanId, RecognitionQuality.NO_SHOE_RECOGNIZED));
+                if (classificationResults == null)
+                    classificationResults = recognizeShoeOffline(bitmap);
             } catch (Exception e) {
-                ThreadHelper.getHandler().post(() -> cb.onError(shoeScan.shoeScanId));
+                Log.e("REST", "Could not recognize shoe offline, cancelling");
+                shoeScan.resultQuality = ShoeScan.RESULT_QUALITY_ERROR;
+                shoeScan.shoeScanId = shoeDao.insertShoeScan(shoeScan);
+                ThreadHelper.getHandler().post(() -> cb.onError(shoeScan));
+                return;
             }
+
+            // Sort classification results with accuracy descending
+            Collections.sort(classificationResults);
+
+            float topResultAccuracy = classificationResults.get(0).getAccuracy();
+
+            if (topResultAccuracy < LOW_ACCURACY_THRESHOLD) shoeScan.resultQuality = ShoeScan.RESULT_QUALITY_NO_RESULT;
+            else if (topResultAccuracy < HIGH_ACCURACY_THRESHOLD) shoeScan.resultQuality = ShoeScan.RESULT_QUALITY_LOW;
+            else shoeScan.resultQuality = ShoeScan.RESULT_QUALITY_HIGH;
+
+            shoeScan.shoeScanId = shoeDao.insertShoeScan(shoeScan);
+
+            if (topResultAccuracy > LOW_ACCURACY_THRESHOLD) {
+                for (int i = 0; i < NUMBER_OF_RESULTS; i++) {
+                    ClassificationResult clResult = classificationResults.get(i);
+                    processRecognitionResult(
+                            shoeScan.shoeScanId,
+                            clResult.getClassName(),
+                            clResult.getAccuracy(),
+                            i == 0 && shoeScan.resultQuality == ShoeScan.RESULT_QUALITY_HIGH
+                            );
+                }
+            }
+
+            ThreadHelper.getHandler().post(() -> cb.onRecognitionComplete(shoeScan));
         });
     }
 
-    private void recognizeShoeOnline(ShoeScan shoeScan) throws IOException {
-        Bitmap bitmap = loadAndRescaleImage(shoeScan.scanImageFilePath);
+    private void processRecognitionResult(long shoeScanId, String shoeName,
+                                                    float confidence, boolean isTopResult) {
+        Shoe shoe;
+        try {
+            shoe = searchShoe(shoeName);
+
+            Shoe savedShoe = shoeDao.getShoeByStyleId(shoe.styleId);
+            if (savedShoe == null) shoe.shoeId = shoeDao.insertShoe(shoe);
+            else shoe.shoeId = savedShoe.shoeId;
+
+            ShoeScanResult scanResult =
+                    new ShoeScanResult(shoe.shoeId, shoeScanId, confidence, isTopResult);
+            shoeDao.insertShoeScanResult(scanResult);
+        } catch (Exception e) {
+            Log.e("REST", "Shoe could not be retrieved: " + shoeName);
+        }
+    }
+
+    private Bitmap cropImageOnline(Bitmap bitmap) throws IOException {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, IMAGE_QUALITY, stream);
+
+        String base64String = Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT);
+
+        Response<ShoeCropping> response =
+                restClient.getAWSConnection().cropShoe(RequestBody.create(
+                        MediaType.parse("text/plain"),
+                        base64String
+                )).execute();
+
+        ShoeCropping result = response.body();
+        if (!response.isSuccessful() ||
+                result == null ||
+                result.result == null ||
+                result.result.imageBase64 == null) throw new IOException();
+
+        byte[] data = Base64.decode(result.result.imageBase64, Base64.DEFAULT);
+
+        return BitmapFactory.decodeByteArray(data, 0, data.length);
+    }
+
+    private List<ClassificationResult> recognizeShoeOnline(Bitmap bitmap) throws IOException, NotFoundException {
+        throw new IOException();
+        /*bitmap = rescaleBitmap(bitmap);
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, IMAGE_QUALITY, stream);
@@ -110,57 +184,17 @@ public class ShoeRepository {
         ShoeRecognitionResult result = response.body();
         if (!response.isSuccessful() || result == null) throw new NotFoundException();
 
-        if (result.objects.get(0).confidence < RECOGNITION_THRESHOLD) {
-            throw new LowAccuracyResultException();
-        } else {
-            List<ShoeRecognitionResultObject> objects = result.objects;
-            for (int i = 0; i < objects.size(); i++) {
-                ShoeRecognitionResultObject o = objects.get(i);
-                processRecognitionResult(shoeScan.shoeScanId, o.title, o.confidence, i == 0);
-            }
+        List<ClassificationResult> classificationResults = new ArrayList<>();
+        for (ShoeRecognitionResultObject o: result.objects) {
+            classificationResults.add(new ClassificationResult(-1, o.title, o.confidence));
         }
+        return classificationResults;*/
     }
 
-    private static final int NUMBER_OF_RESULTS = 10;
-    private static final float RECOGNITION_THRESHOLD = 0.6f;
-    private void recognizeShoeOffline(ShoeScan shoeScan) {
+    private List<ClassificationResult> recognizeShoeOffline(Bitmap bitmap) throws NotFoundException {
         if (classifier == null) throw new NotFoundException();
 
-        Bitmap bitmap = BitmapFactory.decodeFile(shoeScan.scanImageFilePath);
-        List<ClassificationResult> classificationResults = classifier.classify(bitmap);
-
-        // Get results with maximum accuracy
-        Collections.sort(classificationResults);
-
-        if (classificationResults.get(0).getAccuracy() < RECOGNITION_THRESHOLD) {
-            throw new LowAccuracyResultException();
-        } else {
-            for (int i = 0; i < NUMBER_OF_RESULTS; i++) {
-                ClassificationResult r = classificationResults.get(i);
-                processRecognitionResult(shoeScan.shoeScanId, r.getClassName(), r.getAccuracy(), i == 0);
-                Log.d("RESULT", r.toString());
-            }
-        }
-    }
-
-    // TODO: Add transaction
-    private void processRecognitionResult(long shoeScanId, String shoeName,
-                                          float confidence, boolean isTopResult) {
-        Shoe shoe;
-        try {
-            shoe = searchShoe(shoeName);
-
-        } catch (Exception e) {
-            shoe = new Shoe();
-            shoe.name = shoeName;
-
-            Log.e("REST", "Shoe could not be retrieved: " + shoeName);
-        }
-        shoe.shoeId = shoeDao.insertShoe(shoe);
-
-        ShoeScanResult scanResult =
-                new ShoeScanResult(shoe.shoeId, shoeScanId, confidence, isTopResult);
-        shoeDao.insertShoeScanResult(scanResult);
+        return classifier.classify(bitmap);
     }
 
     @NonNull
@@ -179,20 +213,16 @@ public class ShoeRepository {
     }
 
     public static final int IMAGE_PIXELS = 5 * 1024 * 1024;
-    public static final int IMAGE_QUALITY = 70;
+    public static final int IMAGE_QUALITY = 80;
 
-    private Bitmap loadAndRescaleImage(String filePath) {
-        Bitmap bitmap = BitmapFactory.decodeFile(filePath);
-
+    private Bitmap rescaleBitmap(Bitmap bitmap) {
         double scaleFactor =  1d / Math.sqrt((double) (bitmap.getWidth() * bitmap.getHeight()) / (double) IMAGE_PIXELS);
-        bitmap = Bitmap.createScaledBitmap(
+        return Bitmap.createScaledBitmap(
                 bitmap,
                 (int) (bitmap.getWidth() * scaleFactor),
                 (int) (bitmap.getHeight() * scaleFactor),
                 true
         );
-
-        return bitmap;
     }
 
     public LiveData<List<ShoeScanWithShoeScanResults>> getShoeScansWithShoeScanResults() {
@@ -241,9 +271,8 @@ public class ShoeRepository {
         return shoeDao.getTopResult(shoeScanId);
     }
 
-    public enum RecognitionQuality {NO_SHOE_RECOGNIZED, LOW, HIGH}
     public interface ShoeRecognitionCallback {
-        void onRecognitionComplete(long shoeScanId, RecognitionQuality quality);
-        void onError(long shoeScanId);
+        void onRecognitionComplete(ShoeScan shoeScan);
+        void onError(ShoeScan shoeScan);
     }
 }

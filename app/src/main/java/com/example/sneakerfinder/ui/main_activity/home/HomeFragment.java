@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.databinding.FragmentHomeBinding;
 import com.example.sneakerfinder.ui.scan_processing.ScanProcessingActivity;
-import com.example.sneakerfinder.ui.scan_result.ProductActivity;
 import com.example.sneakerfinder.ui.similar_shoes.SimilarShoesActivity;
 
 import androidx.activity.result.ActivityResultLauncher;

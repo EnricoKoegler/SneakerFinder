@@ -15,7 +15,6 @@ import com.example.sneakerfinder.db.entity.ShoeScanResult;
 import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoe;
 import com.squareup.picasso.Picasso;
 
-import java.text.DateFormat;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -67,8 +66,6 @@ public class SimilarShoesAdapter extends RecyclerView.Adapter<SimilarShoesAdapte
         return new ItemViewHolder(itemView);
     }
 
-    private static final DateFormat DATE_FORMAT = DateFormat.getDateTimeInstance();
-
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
          /* TODO: change view binding for better experience,
              maybe use activityStyle to distinguish between SimilarShoes and RecommendedShoes design
@@ -79,7 +76,10 @@ public class SimilarShoesAdapter extends RecyclerView.Adapter<SimilarShoesAdapte
             Shoe shoe = shoeScanResultWithShoe.shoe;
 
             if (shoeScanResult != null) {
-                holder.descText.setText(String.format("Accuracy: %.0f%%", shoeScanResult.confidence * 100));
+                if (activityStyle == SimilarShoesActivity.ActivityStyle.SIMILAR_SHOES)
+                    holder.descText.setText(String.format("Accuracy: %.0f%%", shoeScanResult.confidence * 100));
+                else
+                    holder.descText.setText(String.format("%.0f%% match", shoeScanResult.confidence * 100));
                 holder.descText.setTypeface(null, Typeface.BOLD);
                 if(shoeScanResult.confidence > 0.0) holder.descText.setTextColor(Color.RED);
                 if(shoeScanResult.confidence > 0.1) holder.descText.setTextColor(Color.rgb(255, 165, 0));

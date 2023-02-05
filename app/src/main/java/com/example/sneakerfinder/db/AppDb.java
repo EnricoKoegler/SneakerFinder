@@ -12,7 +12,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
-@Database(entities = {Shoe.class, ShoeScan.class, ShoeScanResult.class}, version = 4)
+@Database(entities = {Shoe.class, ShoeScan.class, ShoeScanResult.class}, version = 5)
 @TypeConverters({RoomConverters.class})
 public abstract class AppDb extends RoomDatabase {
     private static volatile AppDb INSTANCE;

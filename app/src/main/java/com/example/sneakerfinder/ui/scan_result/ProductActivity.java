@@ -5,23 +5,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 
-import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.databinding.ActivityProductBinding;
 import com.example.sneakerfinder.db.entity.Shoe;
 import com.example.sneakerfinder.db.entity.ShoeScan;
 import com.example.sneakerfinder.db.entity.ShoeScanResult;
-import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoe;
-import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoeAndScan;
 import com.example.sneakerfinder.ui.similar_shoes.SimilarShoesActivity;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
-import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 public class ProductActivity extends AppCompatActivity {

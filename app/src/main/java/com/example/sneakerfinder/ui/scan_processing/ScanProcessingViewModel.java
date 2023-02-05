@@ -18,7 +18,7 @@ public class ScanProcessingViewModel extends AndroidViewModel {
     private final MutableLiveData<RecognitionState> recognitionStateLD = new MutableLiveData<>(RecognitionState.PROCESSING);
 
     private final MutableLiveData<String> scanImageFilePathLD = new MutableLiveData<>();
-    private long mShoeScanId;
+    private ShoeScan mShoeScan;
 
     public ScanProcessingViewModel(Application application) {
         super(application);
@@ -33,20 +33,21 @@ public class ScanProcessingViewModel extends AndroidViewModel {
 
         shoeRepository.recognizeShoe(shoeScan, new ShoeRepository.ShoeRecognitionCallback() {
             @Override
-            public void onRecognitionComplete(long shoeScanId, ShoeRepository.RecognitionQuality quality) {
-                mShoeScanId = shoeScanId;
+            public void onRecognitionComplete(ShoeScan shoeScan) {
+                mShoeScan = shoeScan;
 
                 RecognitionState state;
-                switch (quality) {
-                    case LOW: state = RecognitionState.LOW_ACCURACY_RESULT; break;
-                    case HIGH: state = RecognitionState.HIGH_ACCURACY_RESULT; break;
-                    case NO_SHOE_RECOGNIZED: default: state = RecognitionState.NO_RESULT; break;
+                switch (shoeScan.resultQuality) {
+                    case ShoeScan.RESULT_QUALITY_NO_RESULT: state = RecognitionState.NO_RESULT; break;
+                    case ShoeScan.RESULT_QUALITY_LOW: state = RecognitionState.LOW_ACCURACY_RESULT; break;
+                    case ShoeScan.RESULT_QUALITY_HIGH: state = RecognitionState.HIGH_ACCURACY_RESULT; break;
+                    case ShoeScan.RESULT_QUALITY_ERROR: default: state = RecognitionState.ERROR; break;
                 }
                 recognitionStateLD.setValue(state);
             }
 
             @Override
-            public void onError(long shoeScanId) {
+            public void onError(ShoeScan shoeScan) {
                 recognitionStateLD.setValue(RecognitionState.ERROR);
             }
         });
@@ -56,12 +57,16 @@ public class ScanProcessingViewModel extends AndroidViewModel {
         return recognitionStateLD;
     }
 
+    public void setRecognitionState(RecognitionState state) {
+        recognitionStateLD.setValue(state);
+    }
+
     public LiveData<ShoeScanResult> getTopResult() {
-        return shoeRepository.getTopResult(mShoeScanId);
+        return shoeRepository.getTopResult(mShoeScan.shoeScanId);
     }
 
     public long getShoeScanId() {
-        return mShoeScanId;
+        return mShoeScan.shoeScanId;
     }
 
     public LiveData<String> getScanImagePath() {

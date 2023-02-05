@@ -6,16 +6,11 @@ import android.os.Bundle;
 import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.databinding.FragmentSavedResultsBinding;
 import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoe;
-import com.example.sneakerfinder.ui.main_activity.saved_results.SavedResultsAdapter;
 import com.example.sneakerfinder.ui.scan_result.ProductActivity;
 
-import java.util.List;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class SimilarShoesActivity extends AppCompatActivity implements SimilarShoesAdapter.ItemClickListener {
     public static final String EXTRA_SHOE_SCAN_ID = "EXTRA_SHOE_SCAN_ID";

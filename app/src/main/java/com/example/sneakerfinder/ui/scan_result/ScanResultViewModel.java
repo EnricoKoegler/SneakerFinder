@@ -2,12 +2,8 @@ package com.example.sneakerfinder.ui.scan_result;
 
 import android.app.Application;
 
-import com.example.sneakerfinder.db.entity.ShoeScan;
-import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoe;
 import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoeAndScan;
 import com.example.sneakerfinder.repo.ShoeRepository;
-
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;

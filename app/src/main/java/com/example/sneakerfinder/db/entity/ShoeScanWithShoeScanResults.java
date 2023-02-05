@@ -3,9 +3,6 @@ package com.example.sneakerfinder.db.entity;
 import java.util.Collections;
 import java.util.List;
 
-import androidx.room.Embedded;
-import androidx.room.Relation;
-
 public class ShoeScanWithShoeScanResults implements Comparable<ShoeScanWithShoeScanResults> {
     public ShoeScan shoeScan;
     public List<ShoeScanResultWithShoe> shoeScanResults;

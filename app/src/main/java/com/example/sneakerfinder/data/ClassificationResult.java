@@ -1,9 +1,9 @@
-package com.example.sneakerfinder.ml;
+package com.example.sneakerfinder.data;
 
 public class ClassificationResult implements Comparable<ClassificationResult> {
-    private int classId;
-    private String className;
-    private float accuracy;
+    private final int classId;
+    private final String className;
+    private final float accuracy;
 
     public ClassificationResult(int classId, String className, float accuracy) {
         this.classId = classId;

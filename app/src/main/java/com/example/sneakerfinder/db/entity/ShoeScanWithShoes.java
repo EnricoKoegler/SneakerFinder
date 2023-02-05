@@ -1,6 +1,5 @@
 package com.example.sneakerfinder.db.entity;
 
-import java.util.Collections;
 import java.util.List;
 
 import androidx.room.Embedded;

@@ -1,41 +1,31 @@
 package com.example.sneakerfinder.ui.main_activity.scanner;
 
 import android.content.ActivityNotFoundException;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.example.sneakerfinder.repo.ShoeRepository;
-import com.example.sneakerfinder.ui.scan_processing.ScanProcessingActivity;
-import com.example.sneakerfinder.ui.scan_result.ProductActivity;
-import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.databinding.FragmentScannerBinding;
+import com.example.sneakerfinder.ui.scan_processing.ScanProcessingActivity;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import static android.app.Activity.RESULT_OK;
 import static androidx.navigation.fragment.FragmentKt.findNavController;
-import static com.example.sneakerfinder.ui.scan_result.ProductActivity.EXTRA_SHOE_SCAN_ID;
 
 public class ScannerFragment extends Fragment {
     private FragmentScannerBinding binding;
@@ -88,8 +78,7 @@ public class ScannerFragment extends Fragment {
                 public void onActivityResult(ActivityResult result) {
                     scannerViewModel.setPhotoCaptureInProgress(false);
 
-                    Intent data = result.getData();
-                    if (data != null) {
+                    if (result.getResultCode() == RESULT_OK) {
                         Intent i = new Intent(getActivity(), ScanProcessingActivity.class);
                         i.setData(photoUri);
                         startActivity(i);

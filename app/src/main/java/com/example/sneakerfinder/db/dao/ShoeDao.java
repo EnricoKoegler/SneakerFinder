@@ -18,8 +18,11 @@ import androidx.room.Transaction;
 
 @Dao
 public interface ShoeDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     Long insertShoe(Shoe shoe);
+
+    @Query("SELECT * FROM Shoe WHERE styleId = :styleId")
+    Shoe getShoeByStyleId(String styleId);
 
     @Insert
     Long insertShoeScan(ShoeScan shoeScan);
@@ -40,7 +43,11 @@ public interface ShoeDao {
     LiveData<List<ShoeScanResultWithShoe>> getSimilarShoes(long shoeScanId);
 
     @Transaction
-    @Query("SELECT * FROM ShoeScanResult WHERE isTopResult = 0 AND confidence > 0.2 ORDER BY confidence DESC LIMIT 50")
+    @Query("SELECT * FROM ShoeScanResult r1 WHERE shoeScanId = (" +
+            "SELECT shoeScanId FROM ShoeScanResult r2 " +
+            "WHERE isTopResult = 0 AND confidence > 0.01 AND r1.shoeId = r2.shoeId " +
+            "ORDER BY confidence LIMIT 1" +
+            ") ORDER BY confidence DESC LIMIT 50")
     LiveData<List<ShoeScanResultWithShoe>> getRecommendedShoes();
 
     @Transaction

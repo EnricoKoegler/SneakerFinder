@@ -107,11 +107,15 @@ public class ScanProcessingActivity extends AppCompatActivity {
                 break;
             case HIGH_ACCURACY_RESULT:
                 viewModel.getTopResult().observe(this, result -> {
-                    Intent intent = new Intent(this, ProductActivity.class);
-                    intent.putExtra(ProductActivity.EXTRA_SHOE_SCAN_ID, result.shoeScanId);
-                    intent.putExtra(ProductActivity.EXTRA_SHOE_ID, result.shoeId);
-                    startActivity(intent);
-                    finish();
+                    if (result != null) {
+                        Intent intent = new Intent(this, ProductActivity.class);
+                        intent.putExtra(ProductActivity.EXTRA_SHOE_SCAN_ID, result.shoeScanId);
+                        intent.putExtra(ProductActivity.EXTRA_SHOE_ID, result.shoeId);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        viewModel.setRecognitionState(ScanProcessingViewModel.RecognitionState.ERROR);
+                    }
                 });
                 break;
         }
