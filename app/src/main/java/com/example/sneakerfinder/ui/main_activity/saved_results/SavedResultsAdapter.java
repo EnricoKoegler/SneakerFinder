@@ -1,6 +1,8 @@
 package com.example.sneakerfinder.ui.main_activity.saved_results;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.db.entity.Shoe;
+import com.example.sneakerfinder.db.entity.ShoeScan;
 import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoe;
 import com.example.sneakerfinder.db.entity.ShoeScanWithShoeScanResults;
 import com.squareup.picasso.Picasso;
@@ -18,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
@@ -65,6 +69,7 @@ public class SavedResultsAdapter extends RecyclerView.Adapter<SavedResultsAdapte
         private final TextView descText;
         private final ImageView img;
         private final TextView priceText;
+        private final View shoeDrillDown;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
@@ -72,6 +77,8 @@ public class SavedResultsAdapter extends RecyclerView.Adapter<SavedResultsAdapte
             descText = itemView.findViewById(R.id.shoe_desc);
             img = itemView.findViewById(R.id.shoe_iv);
             priceText = itemView.findViewById(R.id.shoe_price);
+            shoeDrillDown = itemView.findViewById(R.id.shoe_drill_down);
+            shoeDrillDown.setOnClickListener(this);
             itemView.findViewById(R.id.item_root).setOnClickListener(this);
         }
 
@@ -108,16 +115,41 @@ public class SavedResultsAdapter extends RecyclerView.Adapter<SavedResultsAdapte
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         if (shoeScans != null){
             ShoeScanWithShoeScanResults scanWithScanResults = shoeScans.get(position);
-            Date scanDate = scanWithScanResults.shoeScan.scanDate;
+            ShoeScan shoeScan = scanWithScanResults.shoeScan;
+            Date scanDate = shoeScan.scanDate;
             if (scanDate != null)
                 holder.descText.setText(DATE_FORMAT.format(scanDate));
 
-            ShoeScanResultWithShoe topResult = scanWithScanResults.shoeScanResults.get(0);
-            if (topResult != null && topResult.shoe != null) {
-                Shoe shoe = topResult.shoe;
-                if (shoe.name != null) holder.titleText.setText(shoe.model);
-                if (shoe.price != null) holder.priceText.setText(shoe.price);
-                if (shoe.thumbnailUrl != null) Picasso.get().load(shoe.thumbnailUrl).into(holder.img);
+            if (shoeScan.resultQuality == ShoeScan.RESULT_QUALITY_HIGH) {
+                ShoeScanResultWithShoe topResult = scanWithScanResults.shoeScanResults.get(0);
+                if (topResult != null && topResult.shoe != null) {
+                    Shoe shoe = topResult.shoe;
+                    if (shoe.name != null) holder.titleText.setText(shoe.model);
+                    if (shoe.price != null) holder.priceText.setText(shoe.price);
+                    if (shoe.thumbnailUrl != null) Picasso.get().load(shoe.thumbnailUrl).into(holder.img);
+                }
+            } else {
+                if (shoeScan.scanImageFilePath == null) holder.img.setImageResource(R.drawable.alert_triangle_grey);
+                else Picasso.get().load("file://" + shoeScan.scanImageFilePath).into(holder.img);
+
+                if (!(shoeScan.resultQuality == ShoeScan.RESULT_QUALITY_LOW)) holder.shoeDrillDown.setVisibility(View.GONE);
+
+                Resources res = holder.itemView.getContext().getResources();
+                holder.titleText.setTextColor(res.getColor(R.color.performance_red));
+
+                switch (shoeScan.resultQuality) {
+                    case ShoeScan.RESULT_QUALITY_ERROR:
+                        holder.titleText.setText("Error");
+                        holder.priceText.setText("Tap to retry recognition ...");
+                        break;
+                    case ShoeScan.RESULT_QUALITY_NO_RESULT:
+                        holder.titleText.setText("No result");
+                        break;
+                    case ShoeScan.RESULT_QUALITY_LOW:
+                        holder.titleText.setText("Result is not accurate");
+                        holder.priceText.setText("Tap to see similar shoes ...");
+                        break;
+                }
             }
         }
     }

@@ -1,166 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="20dp"
-    android:layout_marginRight="20dp"
-    android:orientation="vertical"
-    tools:context=".ui.main_activity.home.HomeFragment">
-
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:layout_gravity="center_horizontal"
-        android:adjustViewBounds="true"
-        android:src="@drawable/appicon" />
-
-
-    <Button
-        android:id="@+id/btn_capture_now"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:height="60dp"
-        android:backgroundTint="@color/black"
-        android:drawableLeft="@drawable/camera_02_capture_red"
-        android:drawableRight="@drawable/chevron_right"
-        android:fontFamily="@font/poppins_bold"
-        android:letterSpacing="0"
-        android:text="Capture now!"
-        android:textAlignment="textStart"
-        android:textAllCaps="false"
-        android:textSize="18sp"
-        app:cornerRadius="10dp" />
-
-    <Button
-        android:id="@+id/btn_upload_from_gallery"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/darkgrey"
-        android:drawableLeft="@drawable/upload_02_white"
-        android:drawableRight="@drawable/chevron_right"
-        android:fontFamily="@font/poppins_medium"
-        android:letterSpacing="0"
-        android:text="Upload from Gallery"
-        android:textAlignment="textStart"
-        android:textAllCaps="false"
-        android:textSize="15sp"
-        app:cornerRadius="10dp">
-
-    </Button>
+    android:padding="16dp">
 
     <LinearLayout
-        android:id="@+id/latest_scan_results_divider"
+        android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:paddingBottom="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
+        <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_semibold"
-            android:text="Latest Scan results"
-            android:textColor="@color/black"
-            android:textSize="16dp" />
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal"
+            android:adjustViewBounds="true"
+            android:src="@drawable/appicon" />
 
-
-        <TextView
+        <Button
+            android:id="@+id/btn_capture_now"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_semibold"
-            android:gravity="right"
-            android:text="->"
-            android:textColor="@color/black"
-            android:textSize="16dp">
+            android:height="60dp"
+            android:backgroundTint="@color/black"
+            android:drawableLeft="@drawable/camera_02_capture_red"
+            android:drawableRight="@drawable/chevron_right"
+            android:fontFamily="@font/poppins_bold"
+            android:letterSpacing="0"
+            android:text="Capture now!"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            app:cornerRadius="10dp" />
 
-        </TextView>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-
-        <FrameLayout
-            android:id="@+id/fragement_placeholder0"
-            android:layout_width="0dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1" />
-
-        <FrameLayout
-            android:id="@+id/fragement_placeholder1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-
-            android:layout_weight="1.2" />
-
-        <FrameLayout
-            android:id="@+id/fragement_placeholder2"
-            android:layout_width="0dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center_vertical"
-
-            android:layout_weight="1" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/further_recommendations_divider"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_semibold"
-            android:text="Further recommendations"
-            android:textColor="@color/black"
-            android:textSize="16dp" />
-
-
-        <TextView
+        <Button
+            android:id="@+id/btn_upload_from_gallery"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_semibold"
-            android:gravity="right"
-            android:text="->"
-            android:textColor="@color/black"
-            android:textSize="16dp">
+            android:backgroundTint="@color/darkgrey"
+            android:drawableLeft="@drawable/upload_02_white"
+            android:drawableRight="@drawable/chevron_right"
+            android:fontFamily="@font/poppins_medium"
+            android:letterSpacing="0"
+            android:text="Upload from Gallery"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textSize="15sp"
+            app:cornerRadius="10dp">
 
-        </TextView>
+        </Button>
 
     </LinearLayout>
-
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:paddingBottom="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+        app:layout_constraintVertical_chainStyle="packed">
 
-        <FrameLayout
-            android:id="@+id/fragement_placeholder3"
-            android:layout_width="0dp"
-            android:layout_height="200dp"
-            android:layout_weight="1" />
+        <LinearLayout
+            android:id="@+id/latest_scan_results_divider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-        <FrameLayout
-            android:id="@+id/fragement_placeholder4"
-            android:layout_width="0dp"
-            android:layout_height="200dp"
-            android:layout_weight="1" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Latest Scan results"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:srcCompat="@drawable/arrow_right"
+                app:tint="@color/black" />
+
+
+        </LinearLayout>
+
+        <include
+            android:id="@+id/latest_scan_results_shoes"
+            layout="@layout/view_three_shoes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:paddingTop="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintVertical_chainStyle="packed">
 
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/further_recommendations_divider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Further recommendations"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:srcCompat="@drawable/arrow_right"
+                app:tint="@color/black" />
+
+
+        </LinearLayout>
+
+        <include
+            android:id="@+id/further_recommendations_shoes"
+            layout="@layout/view_two_shoes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+

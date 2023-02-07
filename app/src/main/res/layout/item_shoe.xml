@@ -1,44 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    android:orientation="horizontal"
-    android:background="@drawable/shoe_item_background">
+    android:background="@drawable/shoe_item_background"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/shoe_iv"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="80dp"
         android:layout_gravity="center"
+        android:layout_weight="1"
+        android:background="@drawable/shoe_item_boarder"
         android:minWidth="150dp"
-        android:src="@drawable/ic_home_black_24dp"
-        android:background="@drawable/shoe_item_boarder"/>
+        app:srcCompat="@drawable/alert_triangle_grey" />
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_weight="2"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginLeft="15dp">
+        android:layout_marginLeft="15dp"
+        android:layout_weight="2"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/shoe_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_medium"
-            android:text="Shoe name"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            tools:text="Shoe name" />
 
         <TextView
             android:id="@+id/shoe_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_light"
-            android:text="scanned on 01/01/2000" />
+            tools:text="scanned on 01/01/2000" />
 
         <TextView
             android:id="@+id/shoe_price"
@@ -46,17 +49,18 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:fontFamily="@font/poppins_medium"
-            android:text="200$" />
+            tools:text="200$" />
 
     </LinearLayout>
 
     <ImageView
+        android:id="@+id/shoe_drill_down"
         android:layout_width="30dp"
         android:layout_height="match_parent"
+        android:background="@drawable/accuracy"
+        android:foreground="?attr/selectableItemBackground"
         android:gravity="center"
         android:src="@drawable/chevron_right"
-        android:clickable="true"
-        android:background="@drawable/accuracy"
         android:textAlignment="center" />
 
 </LinearLayout>

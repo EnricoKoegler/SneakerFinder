@@ -1,209 +1,253 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#575757"
-    android:orientation="vertical">
+    android:background="#575757">
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="wrap_content"
+        android:background="#575757">
 
-        <ImageView
-            android:id="@+id/productdetail_image_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="40dp"
-            android:src="@drawable/example_shoe4"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
-        <ImageView
-            android:id="@+id/productdetail_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="40dp"
-            android:src="@drawable/example_shoe4"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/productdetail_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="30dp"
-            android:clickable="true"
-            android:src="@drawable/chevron_left"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+                <ImageView
+                    android:id="@+id/productdetail_image_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="40dp"
+                    android:src="@drawable/example_shoe4"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/productdetail_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text=" Tap to change"
-            android:textColor="#CDFFFFFF"
-            app:drawableLeftCompat="@drawable/ic_baseline_info_24"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+                <ImageView
+                    android:id="@+id/productdetail_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="40dp"
+                    android:src="@drawable/example_shoe4"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/productdetail_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="30dp"
+                    android:clickable="true"
+                    android:src="@drawable/chevron_left"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/productdetail_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:drawableLeft="@drawable/information_circle_contained"
+                    android:text=" Tap to change"
+                    android:textColor="#CDFFFFFF"
+                    android:textSize="14sp"
+                    app:drawableTint="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <LinearLayout
+                    android:layout_width="140dp"
+                    android:layout_height="70dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginRight="30dp"
+                    android:background="@drawable/accuracy"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:rotation="5"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/productdetail_accuracy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="85%"
+                        android:textColor="@color/white"
+                        android:textSize="24dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Accuracy"
+                        android:textColor="@color/white"
+                        android:textSize="16dp" />
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/product_detail"
+        android:padding="0dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
-            android:layout_width="140dp"
-            android:layout_height="70dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginRight="30dp"
-            android:background="@drawable/accuracy"
-            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.3"
             android:orientation="vertical"
-            android:rotation="5"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:paddingHorizontal="30dp"
+            android:paddingStart="28dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="28dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_light"
+                    android:paddingTop="12dp"
+                    android:text="Your scan result:"
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:id="@+id/productdetail_brandimage"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:paddingRight="20dp"
+                    android:visibility="gone" />
+            </LinearLayout>
+
 
             <TextView
-                android:id="@+id/productdetail_accuracy"
-                android:layout_width="wrap_content"
+                android:id="@+id/productdetail_name"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="85%"
-                android:textColor="@color/white"
-                android:textSize="24dp" />
+                android:fontFamily="@font/poppins_medium"
+                android:text="Shoe name"
+                android:textColor="@color/black"
+                android:textSize="30sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_light"
+                    android:text="Current price"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_light"
+                    android:text="Release date"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/productdetail_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="€100"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/productdetail_release_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="01/01/2000"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/productdetail_description"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Accuracy"
-                android:textColor="@color/white"
-                android:textSize="16dp" />
+                android:layout_weight="1"
+                android:fontFamily="@font/poppins_medium"
+                android:gravity="top|center_vertical"
+                android:paddingTop="8dp"
+                android:text="Desc text"
+                android:textSize="16sp" />
         </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
+    </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
-
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.3"
-        android:background="@drawable/product_detail"
-        android:orientation="vertical"
-        android:paddingHorizontal="30dp"
-        android:paddingTop="10dp">
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <ImageView
+            android:id="@+id/product_gradient"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/poppins_light"
-                android:paddingTop="12dp"
-                android:text="Your scan result:"
-                android:textSize="20sp" />
-
-            <ImageView
-                android:id="@+id/productdetail_brandimage"
-                android:layout_width="0dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:paddingRight="20dp"
-                android:visibility="gone" />
-        </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/productdetail_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_medium"
-            android:text="Shoe name"
-            android:textColor="@color/black"
-            android:textSize="30sp" />
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="1dp"
+            android:layout_marginEnd="1dp"
+            app:srcCompat="@drawable/product_detail_gradient" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/poppins_light"
-                android:text="Current price"
-                android:textSize="12sp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/poppins_light"
-                android:text="Release date"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/productdetail_price"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:layout_weight="1"
-                android:fontFamily="@font/poppins_medium"
-                android:text="€100"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/productdetail_release_date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-
-                android:fontFamily="@font/poppins_medium"
-                android:text="01/01/2000"
-                android:textSize="20sp" />
-        </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/productdetail_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="@font/poppins_medium"
-            android:gravity="top|center_vertical"
-            android:paddingTop="8dp"
-            android:text="Desc text"
-            android:textSize="16sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_gravity="bottom"
+            android:background="@drawable/product_detail_buttons"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
 
             <Button
                 android:id="@+id/btn_similar_shoes"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
+                android:layout_marginBottom="8dp"
                 android:layout_weight="1"
                 android:backgroundTint="#AFAFAF"
                 android:fontFamily="@font/poppins_medium"
@@ -215,6 +259,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
+                android:layout_marginBottom="8dp"
                 android:layout_weight="1"
                 android:backgroundTint="#223189"
                 android:fontFamily="@font/poppins_medium"
@@ -224,9 +269,6 @@
 
 
         </LinearLayout>
-
-
     </LinearLayout>
 
-
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

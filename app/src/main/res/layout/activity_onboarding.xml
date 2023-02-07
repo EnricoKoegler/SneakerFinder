@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/landingpage_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.main_activity.MainActivity">
@@ -23,7 +24,7 @@
         android:fontFamily="@font/poppins_bold"
         android:gravity="right"
         android:lines="4"
-        android:text="it just takes \n 1 photo \n to get your \n favourite shoe "
+        android:text="It just takes \n 1 photo \n to get your \n favourite shoe "
         android:textAlignment="gravity"
         android:textColor="@color/white"
         android:textSize="36dp"

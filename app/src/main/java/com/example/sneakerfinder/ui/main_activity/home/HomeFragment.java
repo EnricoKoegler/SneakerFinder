@@ -5,15 +5,27 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.databinding.FragmentHomeBinding;
+import com.example.sneakerfinder.databinding.ViewShoeBinding;
+import com.example.sneakerfinder.db.entity.Shoe;
+import com.example.sneakerfinder.db.entity.ShoeScan;
+import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoe;
+import com.example.sneakerfinder.db.entity.ShoeScanWithShoeScanResults;
 import com.example.sneakerfinder.ui.scan_processing.ScanProcessingActivity;
+import com.example.sneakerfinder.ui.scan_result.ProductActivity;
 import com.example.sneakerfinder.ui.similar_shoes.SimilarShoesActivity;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 
@@ -37,13 +49,39 @@ public class HomeFragment extends Fragment {
         binding.furtherRecommendationsDivider.setOnClickListener(this::onRecommendationsClick);
         binding.latestScanResultsDivider.setOnClickListener(this::onLatestScanResultsClick);
 
-        getParentFragmentManager().beginTransaction().
-                add(R.id.fragement_placeholder0, ShoeFragment.newInstance("A", "Model", R.drawable.example_shoe4, 100)).
-                add(R.id.fragement_placeholder1, ShoeFragment.newInstance("B", "Model", R.drawable.example_shoe3, 100)).
-                add(R.id.fragement_placeholder2, ShoeFragment.newInstance("C", "Model", R.drawable.example_shoe4, 100)).
-                add(R.id.fragement_placeholder3, ShoeFragment.newInstance("D", "Model", R.drawable.example_shoe4, 100)).
-                add(R.id.fragement_placeholder4, ShoeFragment.newInstance("E", "Model", R.drawable.example_shoe3, 100)).
-                commit();
+        viewModel.getShoeScans().observe(requireActivity(), list -> {
+            ShoeScanResultWithShoe[] selection = new ShoeScanResultWithShoe[3];
+            int count = 0;
+
+            for (ShoeScanWithShoeScanResults scan: list) {
+                if (scan.shoeScan.resultQuality == ShoeScan.RESULT_QUALITY_HIGH) {
+                    selection[count] = scan.shoeScanResults.get(0);
+                    count++;
+                    if (count == 3) break;
+                }
+            }
+
+            if (count == 3) {
+                binding.latestScanResultsShoes.getRoot().setVisibility(View.VISIBLE);
+
+                setShoeViewData(binding.latestScanResultsShoes.shoeCenter, selection[0]);
+                setShoeViewData(binding.latestScanResultsShoes.shoeLeft, selection[1]);
+                setShoeViewData(binding.latestScanResultsShoes.shoeRight, selection[2]);
+            } else {
+                binding.latestScanResultsShoes.getRoot().setVisibility(View.GONE);
+            }
+        });
+
+        viewModel.getRecommendedShoes().observe(requireActivity(), list -> {
+            if (list.size() < 2) {
+                binding.furtherRecommendationsShoes.getRoot().setVisibility(View.GONE);
+            } else {
+                binding.furtherRecommendationsShoes.getRoot().setVisibility(View.VISIBLE);
+
+                setShoeViewData(binding.furtherRecommendationsShoes.shoeLeft, list.get(0));
+                setShoeViewData(binding.furtherRecommendationsShoes.shoeRight, list.get(1));
+            }
+        });
 
         return root;
     }
@@ -66,6 +104,22 @@ public class HomeFragment extends Fragment {
     private void onLatestScanResultsClick(View view) {
         NavController navController = findNavController(this);
         navController.navigate(R.id.action_home_to_saved_results);
+    }
+
+    private void setShoeViewData(ViewShoeBinding binding, ShoeScanResultWithShoe result) {
+        if (result.shoe != null) {
+            Shoe shoe = result.shoe;
+            if (shoe.thumbnailUrl != null) Picasso.get().load(shoe.thumbnailUrl).into(binding.shoeImage);
+
+            binding.getRoot().setOnClickListener(view -> launchProductActivity(shoe.shoeId, result.shoeScanResult.shoeScanId));
+        }
+    }
+
+    private void launchProductActivity(long shoeId, long shoeScanId) {
+        Intent i = new Intent(requireActivity(), ProductActivity.class);
+        i.putExtra(ProductActivity.EXTRA_SHOE_SCAN_ID, shoeScanId);
+        i.putExtra(ProductActivity.EXTRA_SHOE_ID, shoeId);
+        startActivity(i);
     }
 
     private final ActivityResultLauncher<Intent> photoActivityResultLauncher = registerForActivityResult(

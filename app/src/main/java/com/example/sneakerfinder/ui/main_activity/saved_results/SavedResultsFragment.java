@@ -8,8 +8,10 @@ import android.view.ViewGroup;
 
 import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.databinding.FragmentSavedResultsBinding;
+import com.example.sneakerfinder.db.entity.ShoeScan;
 import com.example.sneakerfinder.db.entity.ShoeScanWithShoeScanResults;
 import com.example.sneakerfinder.ui.scan_result.ProductActivity;
+import com.example.sneakerfinder.ui.similar_shoes.SimilarShoesActivity;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -60,9 +62,23 @@ public class SavedResultsFragment extends Fragment implements SavedResultsAdapte
 
     @Override
     public void onItemClicked(ShoeScanWithShoeScanResults scan) {
-        Intent i = new Intent(getActivity(), ProductActivity.class);
-        i.putExtra(ProductActivity.EXTRA_SHOE_SCAN_ID, scan.shoeScan.shoeScanId);
-        i.putExtra(ProductActivity.EXTRA_SHOE_ID, scan.shoeScanResults.get(0).shoe.shoeId);
-        startActivity(i);
+        switch (scan.shoeScan.resultQuality) {
+            case ShoeScan.RESULT_QUALITY_ERROR:
+                // TODO: implement retry
+                break;
+            case ShoeScan.RESULT_QUALITY_NO_RESULT:
+                break;
+            case ShoeScan.RESULT_QUALITY_LOW:
+                Intent intent = new Intent(requireActivity(), SimilarShoesActivity.class);
+                intent.putExtra(ProductActivity.EXTRA_SHOE_SCAN_ID, scan.shoeScan.shoeScanId);
+                startActivity(intent);
+                break;
+            case ShoeScan.RESULT_QUALITY_HIGH:
+                Intent i = new Intent(getActivity(), ProductActivity.class);
+                i.putExtra(ProductActivity.EXTRA_SHOE_SCAN_ID, scan.shoeScan.shoeScanId);
+                i.putExtra(ProductActivity.EXTRA_SHOE_ID, scan.shoeScanResults.get(0).shoe.shoeId);
+                startActivity(i);
+                break;
+        }
     }
 }
