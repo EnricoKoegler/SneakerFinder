@@ -49,7 +49,7 @@ public class SplashActivity extends AwesomeSplash {
         configSplash.setTitleTextSize(30f); //float value
         configSplash.setAnimTitleDuration(2000);
         configSplash.setAnimTitleTechnique(Techniques.FlipInX);
-        configSplash.setTitleFont("font/poppins_medium.ttf"); //provide string to your font located in assets/fonts/
+        //configSplash.setTitleFont("font/poppins_medium.ttf"); //provide string to your font located in assets/fonts/
 
     }
 
