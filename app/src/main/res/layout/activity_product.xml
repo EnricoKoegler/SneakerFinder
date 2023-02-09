@@ -4,16 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#575757">
+    android:background="@color/darkgrey">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#575757">
+        android:background="@color/darkgrey">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
-            android:layout_height="220dp"
+            android:layout_height="240dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -72,6 +72,7 @@
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <LinearLayout
+                    android:id="@+id/linearLayout7"
                     android:layout_width="140dp"
                     android:layout_height="70dp"
                     android:layout_marginTop="30dp"
@@ -87,16 +88,26 @@
                         android:id="@+id/productdetail_accuracy"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="85%"
+                        android:fontFamily="@font/poppins_medium"
                         android:textColor="@color/white"
-                        android:textSize="24dp" />
+                        android:textSize="24sp"
+                        tools:layout_conversion_absoluteHeight="40dp"
+                        tools:layout_conversion_absoluteWidth="50dp"
+                        tools:layout_editor_absoluteX="286dp"
+                        tools:layout_editor_absoluteY="35dp"
+                        tools:text="85%" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
                         android:text="Accuracy"
                         android:textColor="@color/white"
-                        android:textSize="16dp" />
+                        android:textSize="16sp"
+                        tools:layout_conversion_absoluteHeight="20dp"
+                        tools:layout_conversion_absoluteWidth="76dp"
+                        tools:layout_editor_absoluteX="273dp"
+                        tools:layout_editor_absoluteY="75dp" />
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -153,7 +164,8 @@
                 android:fontFamily="@font/poppins_medium"
                 android:text="Shoe name"
                 android:textColor="@color/black"
-                android:textSize="30sp" />
+                android:textSize="30sp"
+                app:lineHeight="40sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -164,7 +176,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:fontFamily="@font/poppins_light"
+                    android:fontFamily="@font/poppins_medium"
                     android:text="Current price"
                     android:textSize="12sp" />
 
@@ -172,7 +184,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:fontFamily="@font/poppins_light"
+                    android:fontFamily="@font/poppins_medium"
                     android:text="Release date"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -244,15 +256,13 @@
 
             <Button
                 android:id="@+id/btn_similar_shoes"
+                style="@style/ButtonStyle.Secondary"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
-                android:backgroundTint="#AFAFAF"
-                android:fontFamily="@font/poppins_medium"
-                android:text="Similar shoes"
-                android:textSize="12dp" />
+                android:text="Similar shoes" />
 
             <Button
                 android:id="@+id/btn_buy_online"
@@ -261,11 +271,7 @@
                 android:layout_marginHorizontal="8dp"
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
-                android:backgroundTint="#223189"
-                android:fontFamily="@font/poppins_medium"
-                android:text="Buy online"
-                android:textColor="@color/white"
-                android:textSize="15dp" />
+                android:text="Buy online" />
 
 
         </LinearLayout>

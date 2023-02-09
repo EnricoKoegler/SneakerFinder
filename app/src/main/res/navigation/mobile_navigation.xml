@@ -24,7 +24,11 @@
         android:id="@+id/navigation_saved_results"
         android:name="com.example.sneakerfinder.ui.main_activity.saved_results.SavedResultsFragment"
         android:label="@string/title_saved_results"
-        tools:layout="@layout/fragment_saved_results" />
+        tools:layout="@layout/fragment_saved_results" >
+        <action
+            android:id="@+id/action_saved_results_to_scanner"
+            app:destination="@id/navigation_scanner" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_scanner"

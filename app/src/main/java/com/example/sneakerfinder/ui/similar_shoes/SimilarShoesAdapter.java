@@ -59,17 +59,11 @@ public class SimilarShoesAdapter extends RecyclerView.Adapter<SimilarShoesAdapte
 
     @NonNull
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        /* TODO: change layout for view holders,
-            maybe use activityStyle to distinguish between SimilarShoes and RecommendedShoes design
-         */
         View itemView = inflater.inflate(R.layout.item_shoe, parent, false);
         return new ItemViewHolder(itemView);
     }
 
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-         /* TODO: change view binding for better experience,
-             maybe use activityStyle to distinguish between SimilarShoes and RecommendedShoes design
-         */
         if (shoeScans != null){
             ShoeScanResultWithShoe shoeScanResultWithShoe = shoeScans.get(position);
             ShoeScanResult shoeScanResult = shoeScanResultWithShoe.shoeScanResult;

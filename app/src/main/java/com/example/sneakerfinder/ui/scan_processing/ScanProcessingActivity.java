@@ -10,6 +10,7 @@ import android.webkit.MimeTypeMap;
 
 import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.databinding.ActivityScanProcessingBinding;
+import com.example.sneakerfinder.db.entity.ShoeScan;
 import com.example.sneakerfinder.ui.scan_result.ProductActivity;
 import com.example.sneakerfinder.ui.similar_shoes.SimilarShoesActivity;
 import com.squareup.picasso.Picasso;
@@ -32,89 +33,102 @@ public class ScanProcessingActivity extends AppCompatActivity {
     private ScanProcessingViewModel viewModel;
     private ActivityScanProcessingBinding binding;
 
+    public static final String EXTRA_RETRY_SHOE_SCAN_ID = "EXTRA_RETRY_SHOE_SCAN_ID";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityScanProcessingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.scanProcessingSimilar.setOnClickListener(view -> {
-            Intent intent = new Intent(this, SimilarShoesActivity.class);
-            intent.putExtra(ProductActivity.EXTRA_SHOE_SCAN_ID, viewModel.getShoeScanId());
-            startActivity(intent);
-        });
-
-        binding.scanProcessingRetry.setOnClickListener(view -> finish());
-
         Intent i = getIntent();
         Uri imageUri = null;
+        Long previousShoeScanId = null;
         if (i.getAction() != null && i.getAction().equals(Intent.ACTION_SEND)) {
             imageUri = i.getParcelableExtra(Intent.EXTRA_STREAM);
         } else if (i.getData() != null) {
             imageUri = i.getData();
+        } else if (i.getLongExtra("EXTRA_RETRY_SHOE_SCAN_ID", -1) != -1) {
+            previousShoeScanId = i.getLongExtra("EXTRA_RETRY_SHOE_SCAN_ID", -1);
         } else {
-            // TODO: error handling
             Log.e("ScanProcessing", "No URI found");
+            finish();
         }
 
         viewModel = new ViewModelProvider(this).get(ScanProcessingViewModel.class);
 
-        viewModel.getScanImagePath().observe(this, imageFilePath ->
-                Picasso.get().load("file://" + imageFilePath).into(binding.scanProcessingImage));
-
-        viewModel.getRecognitionState().observe(this, recognitionStateObserver);
+        viewModel.getCurrentShoeScan().observe(this, recognitionStateObserver);
 
         if (imageUri != null) {
             try {
                 String imageFilePath = createScanFile(imageUri).getAbsolutePath();
                 viewModel.recognizeShoe(imageFilePath);
             } catch (IOException e) {
-                // TODO: error handling
                 Log.e("ScanProcessing", "File could not be copied: " + e.getMessage());
+                finish();
             }
+        } else if (previousShoeScanId != null) {
+            viewModel.retryShoeScan(previousShoeScanId);
         }
     }
 
-    private final Observer<ScanProcessingViewModel.RecognitionState> recognitionStateObserver = recognitionState -> {
-        switch (recognitionState) {
-            case ERROR:
+    private boolean productActivityAlreadyLaunched = false;
+
+    private final Observer<ShoeScan> recognitionStateObserver = shoeScan -> {
+        Picasso.get().load("file://" + shoeScan.scanImageFilePath).into(binding.scanProcessingImage);
+
+        switch (shoeScan.resultQuality) {
+            case ShoeScan.RESULT_QUALITY_ERROR:
                 binding.scanProcessingTitle.setText(R.string.were_sorry);
                 binding.scanProcessingDescription.setText(R.string.error_occurred);
                 binding.scanProcessingBar.setVisibility(View.GONE);
                 binding.scanProcessingRetry.setVisibility(View.VISIBLE);
                 binding.scanProcessingSimilar.setVisibility(View.GONE);
+
+                binding.scanProcessingRetry.setOnClickListener(view -> viewModel.retryShoeScan(shoeScan.shoeScanId));
                 break;
-            case PROCESSING:
+            case ShoeScan.RESULT_QUALITY_PROCESSING:
                 binding.scanProcessingTitle.setText(R.string.please_wait);
                 binding.scanProcessingDescription.setText(R.string.processing_image);
                 binding.scanProcessingBar.setVisibility(View.VISIBLE);
                 binding.scanProcessingRetry.setVisibility(View.INVISIBLE);
                 binding.scanProcessingSimilar.setVisibility(View.INVISIBLE);
                 break;
-            case NO_RESULT:
+            case ShoeScan.RESULT_QUALITY_NO_RESULT:
                 binding.scanProcessingTitle.setText(R.string.were_sorry);
                 binding.scanProcessingDescription.setText(R.string.no_results);
                 binding.scanProcessingBar.setVisibility(View.GONE);
                 binding.scanProcessingRetry.setVisibility(View.VISIBLE);
                 binding.scanProcessingSimilar.setVisibility(View.GONE);
+
+                binding.scanProcessingRetry.setOnClickListener(view -> finish());
                 break;
-            case LOW_ACCURACY_RESULT:
+            case ShoeScan.RESULT_QUALITY_LOW:
                 binding.scanProcessingTitle.setText(R.string.were_sorry);
                 binding.scanProcessingDescription.setText(R.string.no_results_alternatives);
                 binding.scanProcessingBar.setVisibility(View.GONE);
                 binding.scanProcessingRetry.setVisibility(View.VISIBLE);
                 binding.scanProcessingSimilar.setVisibility(View.VISIBLE);
+
+                binding.scanProcessingRetry.setOnClickListener(view -> finish());
+                binding.scanProcessingSimilar.setOnClickListener(view -> {
+                    Intent intent = new Intent(this, SimilarShoesActivity.class);
+                    intent.putExtra(ProductActivity.EXTRA_SHOE_SCAN_ID, shoeScan.shoeScanId);
+                    startActivity(intent);
+                });
                 break;
-            case HIGH_ACCURACY_RESULT:
-                viewModel.getTopResult().observe(this, result -> {
+            case ShoeScan.RESULT_QUALITY_HIGH:
+                if (productActivityAlreadyLaunched) return;
+
+                viewModel.getTopResult(shoeScan.shoeScanId).observe(this, result -> {
+                    if (productActivityAlreadyLaunched) return;
                     if (result != null) {
                         Intent intent = new Intent(this, ProductActivity.class);
                         intent.putExtra(ProductActivity.EXTRA_SHOE_SCAN_ID, result.shoeScanId);
                         intent.putExtra(ProductActivity.EXTRA_SHOE_ID, result.shoeId);
+                        productActivityAlreadyLaunched = true;
                         startActivity(intent);
                         finish();
-                    } else {
-                        viewModel.setRecognitionState(ScanProcessingViewModel.RecognitionState.ERROR);
                     }
                 });
                 break;

@@ -12,13 +12,13 @@ import java.util.List;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import androidx.room.Update;
 
 @Dao
 public interface ShoeDao {
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert
     Long insertShoe(Shoe shoe);
 
     @Query("SELECT * FROM Shoe WHERE styleId = :styleId")
@@ -26,6 +26,12 @@ public interface ShoeDao {
 
     @Insert
     Long insertShoeScan(ShoeScan shoeScan);
+
+    @Update
+    void updateShoeScan(ShoeScan shoeScan);
+
+    @Query("SELECT * FROM SHOESCAN WHERE shoeScanId = :shoeScanId")
+    ShoeScan getShoeScanById(long shoeScanId);
 
     @Insert
     void insertShoeScanResult(ShoeScanResult result);

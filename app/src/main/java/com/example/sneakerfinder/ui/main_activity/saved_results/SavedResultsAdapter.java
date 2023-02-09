@@ -2,7 +2,6 @@ package com.example.sneakerfinder.ui.main_activity.saved_results;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,6 @@ import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
@@ -135,7 +133,7 @@ public class SavedResultsAdapter extends RecyclerView.Adapter<SavedResultsAdapte
                 if (!(shoeScan.resultQuality == ShoeScan.RESULT_QUALITY_LOW)) holder.shoeDrillDown.setVisibility(View.GONE);
 
                 Resources res = holder.itemView.getContext().getResources();
-                holder.titleText.setTextColor(res.getColor(R.color.performance_red));
+                holder.titleText.setTextColor(res.getColor(R.color.red));
 
                 switch (shoeScan.resultQuality) {
                     case ShoeScan.RESULT_QUALITY_ERROR:

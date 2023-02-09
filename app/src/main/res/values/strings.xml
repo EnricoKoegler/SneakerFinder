@@ -14,4 +14,14 @@
     <string name="no_results">No results were found.</string>
     <string name="recommended_shoes">Recommended shoes</string>
     <string name="similar_shoes">Similar shoes</string>
+    <string name="scan_results_will_be_displayed_here">Scan results will be displayed here as soon as you have scanned your first shoes.</string>
+    <string name="start_scanning_shoes">Start scanning shoes</string>
+    <string name="my_scan_results">My scan results</string>
+    <string name="capture_now_cta">Capture now!</string>
+    <string name="upload_from_gallery">Upload from Gallery</string>
+    <string name="latest_scan_results">Latest Scan results</string>
+    <string name="further_recommendations">Further recommendations</string>
+    <string name="further_recommendations_will_be_displayed_here">Further recommendations will be displayed here as soon as you have scanned your first shoes.</string>
+    <string name="button_ok">OK</string>
+    <string name="image_could_not_be_read_from_device">The image could not be read from your device.</string>
 </resources>

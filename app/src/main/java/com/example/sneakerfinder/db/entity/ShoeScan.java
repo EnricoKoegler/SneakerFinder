@@ -14,6 +14,8 @@ public class ShoeScan implements Comparable<ShoeScan> {
 
     @ColumnInfo(defaultValue = "2")
     public int resultQuality;
+
+    public static final int RESULT_QUALITY_PROCESSING = -2;
     public static final int RESULT_QUALITY_ERROR = -1;
     public static final int RESULT_QUALITY_NO_RESULT = 0;
     public static final int RESULT_QUALITY_LOW = 1;

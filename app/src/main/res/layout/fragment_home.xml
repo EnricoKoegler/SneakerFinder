@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
@@ -24,45 +25,35 @@
 
         <Button
             android:id="@+id/btn_capture_now"
+            style="@style/ButtonStyle.Cta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:height="60dp"
             android:backgroundTint="@color/black"
             android:drawableLeft="@drawable/camera_02_capture_red"
-            android:drawableRight="@drawable/chevron_right"
             android:fontFamily="@font/poppins_bold"
-            android:letterSpacing="0"
-            android:text="Capture now!"
+            android:text="@string/capture_now_cta"
             android:textAlignment="textStart"
-            android:textAllCaps="false"
-            android:textSize="18sp"
-            app:cornerRadius="10dp" />
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/btn_upload_from_gallery"
+            style="@style/ButtonStyle.Cta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/darkgrey"
             android:drawableLeft="@drawable/upload_02_white"
-            android:drawableRight="@drawable/chevron_right"
-            android:fontFamily="@font/poppins_medium"
-            android:letterSpacing="0"
-            android:text="Upload from Gallery"
-            android:textAlignment="textStart"
-            android:textAllCaps="false"
-            android:textSize="15sp"
-            app:cornerRadius="10dp">
+            android:text="@string/upload_from_gallery"
+            android:textAlignment="textStart">
 
         </Button>
 
     </LinearLayout>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="vertical"
-        android:paddingBottom="12dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_chainStyle="packed"
@@ -72,24 +63,26 @@
 
         <LinearLayout
             android:id="@+id/latest_scan_results_divider"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="@font/poppins_semibold"
-                android:text="Latest Scan results"
-                android:textColor="@color/black"
-                android:textSize="16dp" />
+                android:text="@string/latest_scan_results"
+                android:textAppearance="@style/TextAppearanceStyle.Heading" />
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 app:srcCompat="@drawable/arrow_right"
-                app:tint="@color/black" />
+                app:tint="@color/black"
+                tools:ignore="ContentDescription" />
 
 
         </LinearLayout>
@@ -97,12 +90,57 @@
         <include
             android:id="@+id/latest_scan_results_shoes"
             layout="@layout/view_three_shoes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/latest_scan_results_divider" />
 
-    </LinearLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/latest_scan_results_no_items"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/transparent_overlay"
+            android:padding="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/latest_scan_results_divider">
 
-    <LinearLayout
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:gravity="center"
+                android:text="@string/scan_results_will_be_displayed_here"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toTopOf="@+id/latest_scan_results_no_items_btn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <Button
+                android:id="@+id/latest_scan_results_no_items_btn"
+                style="@style/ButtonStyle.Cta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/start_scanning_shoes"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView3"
+                app:layout_constraintVertical_chainStyle="packed" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout4"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -117,25 +155,29 @@
 
         <LinearLayout
             android:id="@+id/further_recommendations_divider"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_conversion_absoluteHeight="27dp"
+            tools:layout_conversion_absoluteWidth="379dp">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="@font/poppins_semibold"
-                android:text="Further recommendations"
-                android:textColor="@color/black"
-                android:textSize="16dp" />
+                android:text="@string/further_recommendations"
+                android:textAppearance="@style/TextAppearanceStyle.Heading" />
 
             <ImageView
                 android:id="@+id/imageView3"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 app:srcCompat="@drawable/arrow_right"
-                app:tint="@color/black" />
+                app:tint="@color/black"
+                tools:ignore="ContentDescription" />
 
 
         </LinearLayout>
@@ -143,9 +185,56 @@
         <include
             android:id="@+id/further_recommendations_shoes"
             layout="@layout/view_two_shoes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/further_recommendations_divider"
+            tools:layout_conversion_absoluteHeight="274dp"
+            tools:layout_conversion_absoluteWidth="379dp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/further_recommendations_no_items"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/transparent_overlay"
+            android:padding="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/further_recommendations_divider">
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:gravity="center"
+                android:text="@string/further_recommendations_will_be_displayed_here"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toTopOf="@+id/further_recommendations_no_items_btn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <Button
+                android:id="@+id/further_recommendations_no_items_btn"
+                style="@style/ButtonStyle.Cta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/start_scanning_shoes"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView4"
+                app:layout_constraintVertical_chainStyle="packed" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

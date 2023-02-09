@@ -1,12 +1,11 @@
 package com.example.sneakerfinder.ui.main_activity.home;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.databinding.FragmentHomeBinding;
@@ -15,17 +14,16 @@ import com.example.sneakerfinder.db.entity.Shoe;
 import com.example.sneakerfinder.db.entity.ShoeScan;
 import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoe;
 import com.example.sneakerfinder.db.entity.ShoeScanWithShoeScanResults;
+import com.example.sneakerfinder.helper.UIHelper;
 import com.example.sneakerfinder.ui.scan_processing.ScanProcessingActivity;
 import com.example.sneakerfinder.ui.scan_result.ProductActivity;
 import com.example.sneakerfinder.ui.similar_shoes.SimilarShoesActivity;
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 
@@ -38,7 +36,7 @@ public class HomeFragment extends Fragment {
     private HomeViewModel viewModel;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
@@ -48,6 +46,8 @@ public class HomeFragment extends Fragment {
         binding.btnUploadFromGallery.setOnClickListener(this::onUploadBtnClick);
         binding.furtherRecommendationsDivider.setOnClickListener(this::onRecommendationsClick);
         binding.latestScanResultsDivider.setOnClickListener(this::onLatestScanResultsClick);
+        binding.furtherRecommendationsNoItemsBtn.setOnClickListener(this::onCaptureBtnClick);
+        binding.latestScanResultsNoItemsBtn.setOnClickListener(this::onCaptureBtnClick);
 
         viewModel.getShoeScans().observe(requireActivity(), list -> {
             ShoeScanResultWithShoe[] selection = new ShoeScanResultWithShoe[3];
@@ -63,20 +63,24 @@ public class HomeFragment extends Fragment {
 
             if (count == 3) {
                 binding.latestScanResultsShoes.getRoot().setVisibility(View.VISIBLE);
+                binding.latestScanResultsNoItems.setVisibility(View.GONE);
 
                 setShoeViewData(binding.latestScanResultsShoes.shoeCenter, selection[0]);
                 setShoeViewData(binding.latestScanResultsShoes.shoeLeft, selection[1]);
                 setShoeViewData(binding.latestScanResultsShoes.shoeRight, selection[2]);
             } else {
                 binding.latestScanResultsShoes.getRoot().setVisibility(View.GONE);
+                binding.latestScanResultsNoItems.setVisibility(View.VISIBLE);
             }
         });
 
         viewModel.getRecommendedShoes().observe(requireActivity(), list -> {
             if (list.size() < 2) {
                 binding.furtherRecommendationsShoes.getRoot().setVisibility(View.GONE);
+                binding.furtherRecommendationsNoItems.setVisibility(View.VISIBLE);
             } else {
                 binding.furtherRecommendationsShoes.getRoot().setVisibility(View.VISIBLE);
+                binding.furtherRecommendationsNoItems.setVisibility(View.GONE);
 
                 setShoeViewData(binding.furtherRecommendationsShoes.shoeLeft, list.get(0));
                 setShoeViewData(binding.furtherRecommendationsShoes.shoeRight, list.get(1));
@@ -95,6 +99,22 @@ public class HomeFragment extends Fragment {
         fileIntent.setType("image/*");
         photoActivityResultLauncher.launch(fileIntent);
     }
+
+    private final ActivityResultLauncher<Intent> photoActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent resultIntent = result.getData();
+                if (result.getResultCode() == RESULT_OK && resultIntent != null && resultIntent.getData() != null) {
+                    // data contains content uri
+                    Intent i = new Intent(requireActivity(), ScanProcessingActivity.class);
+                    i.setData(resultIntent.getData());
+                    startActivity(i);
+                } else {
+                    Context context = requireActivity();
+                    UIHelper.showAlertDialog(context, context.getString(R.string.were_sorry), context.getString(R.string.image_could_not_be_read_from_device), null);
+                }
+            }
+    );
 
     private void onRecommendationsClick(View view) {
         Intent intent = new Intent(requireActivity(), SimilarShoesActivity.class);
@@ -121,19 +141,4 @@ public class HomeFragment extends Fragment {
         i.putExtra(ProductActivity.EXTRA_SHOE_ID, shoeId);
         startActivity(i);
     }
-
-    private final ActivityResultLauncher<Intent> photoActivityResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                Intent resultIntent = result.getData();
-                if (result.getResultCode() == RESULT_OK && resultIntent != null && resultIntent.getData() != null) {
-                    // data contains content uri
-                    Intent i = new Intent(requireActivity(), ScanProcessingActivity.class);
-                    i.setData(resultIntent.getData());
-                    startActivity(i);
-                } else {
-                    // TODO: error handling
-                }
-            }
-    );
 }

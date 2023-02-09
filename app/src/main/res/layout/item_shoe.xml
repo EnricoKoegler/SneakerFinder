@@ -7,9 +7,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    android:background="@drawable/shoe_item_background"
+    android:background="@drawable/round_border_line"
     android:foreground="?attr/selectableItemBackground"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:padding="10dp">
 
     <ImageView
         android:id="@+id/shoe_iv"
@@ -17,7 +18,6 @@
         android:layout_height="80dp"
         android:layout_gravity="center"
         android:layout_weight="1"
-        android:background="@drawable/shoe_item_boarder"
         android:minWidth="150dp"
         app:srcCompat="@drawable/alert_triangle_grey" />
 
@@ -34,6 +34,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_medium"
             android:textColor="@color/black"
+            android:textSize="16sp"
             tools:text="Shoe name" />
 
         <TextView
@@ -57,7 +58,7 @@
         android:id="@+id/shoe_drill_down"
         android:layout_width="30dp"
         android:layout_height="match_parent"
-        android:background="@drawable/accuracy"
+        android:background="@drawable/shoe_drill_down_bg"
         android:foreground="?attr/selectableItemBackground"
         android:gravity="center"
         android:src="@drawable/chevron_right"

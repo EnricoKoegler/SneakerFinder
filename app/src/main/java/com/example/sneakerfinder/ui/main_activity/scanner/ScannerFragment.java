@@ -1,6 +1,6 @@
 package com.example.sneakerfinder.ui.main_activity.scanner;
 
-import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,7 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.databinding.FragmentScannerBinding;
+import com.example.sneakerfinder.helper.UIHelper;
 import com.example.sneakerfinder.ui.scan_processing.ScanProcessingActivity;
 
 import java.io.File;
@@ -64,10 +66,14 @@ public class ScannerFragment extends Fragment {
 
             scannerViewModel.setPhotoCaptureInProgress(true);
             capturePhotoResult.launch(takePictureIntent);
-        } catch (ActivityNotFoundException e) {
-            // TODO: display error state to the user
-        } catch (IOException e) {
-            // TODO: display error state to the user
+        } catch (Exception e) {
+            Context context = requireContext();
+            UIHelper.showAlertDialog(context,
+                context.getString(R.string.were_sorry),
+                e.getLocalizedMessage(), (dialogInterface, i) -> {
+                        scannerViewModel.setPhotoCaptureInProgress(false);
+                        findNavController(ScannerFragment.this).navigateUp();
+                });
         }
     }
 

@@ -33,6 +33,7 @@ import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -65,71 +66,107 @@ public class ShoeRepository {
     private static final float LOW_ACCURACY_THRESHOLD = 0.2f;
     private static final float HIGH_ACCURACY_THRESHOLD = 0.6f;
 
+    private final MutableLiveData<ShoeScan> currentShoeScan = new MutableLiveData<>();
 
-    public void recognizeShoe(ShoeScan shoeScan, ShoeRecognitionCallback cb) {
+    public LiveData<ShoeScan> getCurrentShoeScan() {
+        return currentShoeScan;
+    }
+
+    public void storeShoeScanAndRecognizeShoe(ShoeScan shoeScan) {
         ThreadHelper.getExecutor().execute(() -> {
-            Bitmap bitmap = BitmapFactory.decodeFile(shoeScan.scanImageFilePath);
-
-            if (USE_ONLINE_IMAGE_CROPPING) {
-                try {
-                    bitmap = cropImageOnline(bitmap);
-                } catch (Exception e) {
-                    Log.e("REST", "Online image cropping did not work");
-                }
-            }
-
-            List<ClassificationResult> classificationResults = null;
-            try {
-                if (USE_ONLINE_RECOGNITION) {
-                    classificationResults = recognizeShoeOnline(bitmap);
-                }
-            } catch (Exception e) {
-                Log.e("REST", "Could not recognize shoe online");
-            }
-
-            try {
-                if (classificationResults == null)
-                    classificationResults = recognizeShoeOffline(bitmap);
-            } catch (Exception e) {
-                Log.e("REST", "Could not recognize shoe offline, cancelling");
-                shoeScan.resultQuality = ShoeScan.RESULT_QUALITY_ERROR;
-                shoeScan.shoeScanId = shoeDao.insertShoeScan(shoeScan);
-                ThreadHelper.getHandler().post(() -> cb.onError(shoeScan));
-                return;
-            }
-
-            // Sort classification results with accuracy descending
-            Collections.sort(classificationResults);
-
-            float topResultAccuracy = classificationResults.get(0).getAccuracy();
-
-            if (topResultAccuracy < LOW_ACCURACY_THRESHOLD) shoeScan.resultQuality = ShoeScan.RESULT_QUALITY_NO_RESULT;
-            else if (topResultAccuracy < HIGH_ACCURACY_THRESHOLD) shoeScan.resultQuality = ShoeScan.RESULT_QUALITY_LOW;
-            else shoeScan.resultQuality = ShoeScan.RESULT_QUALITY_HIGH;
-
+            shoeScan.resultQuality = ShoeScan.RESULT_QUALITY_ERROR;
             shoeScan.shoeScanId = shoeDao.insertShoeScan(shoeScan);
 
-            if (topResultAccuracy > LOW_ACCURACY_THRESHOLD) {
-                for (int i = 0; i < NUMBER_OF_RESULTS; i++) {
-                    ClassificationResult clResult = classificationResults.get(i);
-                    processRecognitionResult(
-                            shoeScan.shoeScanId,
-                            clResult.getClassName(),
-                            clResult.getAccuracy(),
-                            i == 0 && shoeScan.resultQuality == ShoeScan.RESULT_QUALITY_HIGH
-                            );
-                }
-            }
-
-            ThreadHelper.getHandler().post(() -> cb.onRecognitionComplete(shoeScan));
+            recognizeShoe(shoeScan);
         });
     }
 
-    private void processRecognitionResult(long shoeScanId, String shoeName,
-                                                    float confidence, boolean isTopResult) {
-        Shoe shoe;
+    public void retryShoeScan(long shoeScanId) {
+        ThreadHelper.getExecutor().execute(() -> {
+            ShoeScan shoeScan = shoeDao.getShoeScanById(shoeScanId);
+
+            if (shoeScan == null) {
+                ShoeScan fakeShoeScan = new ShoeScan();
+                fakeShoeScan.resultQuality = ShoeScan.RESULT_QUALITY_ERROR;
+                currentShoeScan.postValue(fakeShoeScan);
+            } else if (shoeScan.resultQuality == ShoeScan.RESULT_QUALITY_ERROR) {
+                recognizeShoe(shoeScan);
+            } else {
+                currentShoeScan.postValue(shoeScan);
+            }
+        });
+    }
+
+    private void recognizeShoe(ShoeScan shoeScan) {
+        shoeScan.resultQuality = ShoeScan.RESULT_QUALITY_PROCESSING;
+        currentShoeScan.postValue(shoeScan);
+
+        Bitmap bitmap = BitmapFactory.decodeFile(shoeScan.scanImageFilePath);
+
+        if (USE_ONLINE_IMAGE_CROPPING) {
+            try {
+                bitmap = cropImageOnline(bitmap);
+            } catch (Exception e) {
+                Log.e("REST", "Online image cropping did not work");
+            }
+        }
+
+        List<ClassificationResult> classificationResults = null;
         try {
-            shoe = searchShoe(shoeName);
+            if (USE_ONLINE_RECOGNITION) {
+                classificationResults = recognizeShoeOnline(bitmap);
+            }
+        } catch (Exception e) {
+            Log.e("REST", "Could not recognize shoe online");
+        }
+
+        try {
+            if (classificationResults == null)
+                classificationResults = recognizeShoeOffline(bitmap);
+        } catch (Exception e) {
+            Log.e("REST", "Could not recognize shoe offline, cancelling");
+            shoeScan.resultQuality = ShoeScan.RESULT_QUALITY_ERROR;
+            shoeDao.updateShoeScan(shoeScan);
+            currentShoeScan.postValue(shoeScan);
+            return;
+        }
+
+        // Sort classification results with accuracy descending
+        Collections.sort(classificationResults);
+
+        float topResultAccuracy = classificationResults.get(0).getAccuracy();
+
+        if (topResultAccuracy < LOW_ACCURACY_THRESHOLD) shoeScan.resultQuality = ShoeScan.RESULT_QUALITY_NO_RESULT;
+        else if (topResultAccuracy < HIGH_ACCURACY_THRESHOLD) shoeScan.resultQuality = ShoeScan.RESULT_QUALITY_LOW;
+        else shoeScan.resultQuality = ShoeScan.RESULT_QUALITY_HIGH;
+
+        try {
+            if (topResultAccuracy > LOW_ACCURACY_THRESHOLD) {
+                for (int i = 0; i < NUMBER_OF_RESULTS; i++) {
+                    ClassificationResult clResult = classificationResults.get(i);
+                        processRecognitionResult(
+                                shoeScan.shoeScanId,
+                                clResult.getClassName(),
+                                clResult.getAccuracy(),
+                                i == 0 && shoeScan.resultQuality == ShoeScan.RESULT_QUALITY_HIGH
+                        );
+
+                }
+            }
+        } catch (IOException e) {
+            Log.e("REST", "No connection to SneaksAPI");
+            shoeScan.resultQuality = ShoeScan.RESULT_QUALITY_ERROR;
+        }
+
+        shoeDao.updateShoeScan(shoeScan);
+
+        currentShoeScan.postValue(shoeScan);
+    }
+
+    private void processRecognitionResult(long shoeScanId, String shoeName,
+                                          float confidence, boolean isTopResult) throws IOException {
+        try {
+            Shoe shoe = searchShoe(shoeName);
 
             Shoe savedShoe = shoeDao.getShoeByStyleId(shoe.styleId);
             if (savedShoe == null) shoe.shoeId = shoeDao.insertShoe(shoe);
@@ -138,8 +175,8 @@ public class ShoeRepository {
             ShoeScanResult scanResult =
                     new ShoeScanResult(shoe.shoeId, shoeScanId, confidence, isTopResult);
             shoeDao.insertShoeScanResult(scanResult);
-        } catch (Exception e) {
-            Log.e("REST", "Shoe could not be retrieved: " + shoeName);
+        } catch (NotFoundException e) {
+            Log.e("REST", "Shoe not found in SneaksAPI: " + shoeName);
         }
     }
 
@@ -198,7 +235,7 @@ public class ShoeRepository {
     }
 
     @NonNull
-    private Shoe searchShoe(String searchString) throws IOException {
+    private Shoe searchShoe(String searchString) throws IOException, NotFoundException {
         Response<List<SneaksProduct>> response =
                 restClient.getSneaksConnection().getSneakers(searchString, 1).execute();
 
