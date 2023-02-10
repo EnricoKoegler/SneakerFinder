@@ -17,7 +17,9 @@ public class SneaksAdapter {
         s.model = p.make;
         s.colorway = p.colorway;
 
-        s.price = CURRENCY_FORMAT.format(p.retailPrice);
+        try {
+            s.price = CURRENCY_FORMAT.format(p.lowestResellPrice.stockX);
+        } catch (Exception ignored) {}
         s.onlineStoreUrl = p.resellLinks.stockX;
         s.releaseDate = p.releaseDate;
         s.thumbnailUrl = p.thumbnail;

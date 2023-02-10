@@ -17,6 +17,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@drawable/example_shoe3" />
+        app:srcCompat="@drawable/example_shoe4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

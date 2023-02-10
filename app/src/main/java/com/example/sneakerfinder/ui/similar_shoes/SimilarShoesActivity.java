@@ -52,6 +52,7 @@ public class SimilarShoesActivity extends AppCompatActivity implements SimilarSh
         Intent i = new Intent(this, ProductActivity.class);
         i.putExtra(ProductActivity.EXTRA_SHOE_SCAN_ID, shoe.shoeScanResult.shoeScanId);
         i.putExtra(ProductActivity.EXTRA_SHOE_ID, shoe.shoe.shoeId);
+        i.putExtra(ProductActivity.EXTRA_SHOW_SIMILAR_SHOES, false);
         startActivity(i);
     }
 

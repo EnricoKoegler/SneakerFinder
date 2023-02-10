@@ -24,4 +24,8 @@ public class SavedResultsViewModel extends AndroidViewModel {
     public LiveData<List<ShoeScanWithShoeScanResults>> getShoeScans() {
         return shoeRepository.getShoeScansWithShoeScanResults();
     }
+
+    public void deleteShoeScan(long shoeScanId) {
+        shoeRepository.deleteShoeScanAndResults(shoeScanId);
+    }
 }

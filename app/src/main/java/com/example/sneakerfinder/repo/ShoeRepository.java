@@ -64,7 +64,7 @@ public class ShoeRepository {
 
     private static final int NUMBER_OF_RESULTS = 10;
     private static final float LOW_ACCURACY_THRESHOLD = 0.2f;
-    private static final float HIGH_ACCURACY_THRESHOLD = 0.6f;
+    private static final float HIGH_ACCURACY_THRESHOLD = 0.5f;
 
     private final MutableLiveData<ShoeScan> currentShoeScan = new MutableLiveData<>();
 
@@ -107,7 +107,7 @@ public class ShoeRepository {
             try {
                 bitmap = cropImageOnline(bitmap);
             } catch (Exception e) {
-                Log.e("REST", "Online image cropping did not work");
+                Log.e("REST", "Online image cropping did not work: " + e.getMessage());
             }
         }
 
@@ -117,14 +117,14 @@ public class ShoeRepository {
                 classificationResults = recognizeShoeOnline(bitmap);
             }
         } catch (Exception e) {
-            Log.e("REST", "Could not recognize shoe online");
+            Log.e("REST", "Could not recognize shoe online: " + e.getMessage());
         }
 
         try {
             if (classificationResults == null)
                 classificationResults = recognizeShoeOffline(bitmap);
         } catch (Exception e) {
-            Log.e("REST", "Could not recognize shoe offline, cancelling");
+            Log.e("REST", "Could not recognize shoe offline, cancelling: " + e.getMessage());
             shoeScan.resultQuality = ShoeScan.RESULT_QUALITY_ERROR;
             shoeDao.updateShoeScan(shoeScan);
             currentShoeScan.postValue(shoeScan);
@@ -306,6 +306,10 @@ public class ShoeRepository {
 
     public LiveData<ShoeScanResult> getTopResult(long shoeScanId) {
         return shoeDao.getTopResult(shoeScanId);
+    }
+
+    public void deleteShoeScanAndResults(long shoeScanId) {
+        ThreadHelper.getExecutor().execute(() -> shoeDao.deleteShoeScanAndResults(shoeScanId));
     }
 
     public interface ShoeRecognitionCallback {

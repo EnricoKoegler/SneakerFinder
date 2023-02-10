@@ -29,7 +29,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/shoe_right"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_weight="1.2"
+        app:layout_constraintHorizontal_weight="1.5"
         app:layout_constraintStart_toEndOf="@+id/shoe_left"
         app:layout_constraintTop_toTopOf="parent" />
 

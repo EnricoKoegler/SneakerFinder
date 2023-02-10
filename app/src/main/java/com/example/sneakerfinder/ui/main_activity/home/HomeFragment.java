@@ -44,8 +44,6 @@ public class HomeFragment extends Fragment {
 
         binding.btnCaptureNow.setOnClickListener(this::onCaptureBtnClick);
         binding.btnUploadFromGallery.setOnClickListener(this::onUploadBtnClick);
-        binding.furtherRecommendationsDivider.setOnClickListener(this::onRecommendationsClick);
-        binding.latestScanResultsDivider.setOnClickListener(this::onLatestScanResultsClick);
         binding.furtherRecommendationsNoItemsBtn.setOnClickListener(this::onCaptureBtnClick);
         binding.latestScanResultsNoItemsBtn.setOnClickListener(this::onCaptureBtnClick);
 
@@ -61,26 +59,42 @@ public class HomeFragment extends Fragment {
                 }
             }
 
-            if (count == 3) {
+            if (count > 0) {
                 binding.latestScanResultsShoes.getRoot().setVisibility(View.VISIBLE);
                 binding.latestScanResultsNoItems.setVisibility(View.GONE);
+                binding.furtherRecommendationsDivider.setOnClickListener(this::onRecommendationsClick);
 
                 setShoeViewData(binding.latestScanResultsShoes.shoeCenter, selection[0]);
-                setShoeViewData(binding.latestScanResultsShoes.shoeLeft, selection[1]);
-                setShoeViewData(binding.latestScanResultsShoes.shoeRight, selection[2]);
+
+                if (count > 1) {
+                    setShoeViewData(binding.latestScanResultsShoes.shoeLeft, selection[1]);
+                    binding.latestScanResultsShoes.shoeLeft.getRoot().setVisibility(View.VISIBLE);
+                } else {
+                    binding.latestScanResultsShoes.shoeLeft.getRoot().setVisibility(View.GONE);
+                }
+
+                if (count > 2) {
+                    setShoeViewData(binding.latestScanResultsShoes.shoeRight, selection[2]);
+                    binding.latestScanResultsShoes.shoeRight.getRoot().setVisibility(View.VISIBLE);
+                } else {
+                    binding.latestScanResultsShoes.shoeRight.getRoot().setVisibility(View.GONE);
+                }
             } else {
-                binding.latestScanResultsShoes.getRoot().setVisibility(View.GONE);
+                //binding.latestScanResultsShoes.getRoot().setVisibility(View.GONE);
                 binding.latestScanResultsNoItems.setVisibility(View.VISIBLE);
+                binding.furtherRecommendationsDivider.setOnClickListener(null);
             }
         });
 
         viewModel.getRecommendedShoes().observe(requireActivity(), list -> {
             if (list.size() < 2) {
-                binding.furtherRecommendationsShoes.getRoot().setVisibility(View.GONE);
+                //binding.furtherRecommendationsShoes.getRoot().setVisibility(View.GONE);
                 binding.furtherRecommendationsNoItems.setVisibility(View.VISIBLE);
+                binding.latestScanResultsDivider.setOnClickListener(null);
             } else {
                 binding.furtherRecommendationsShoes.getRoot().setVisibility(View.VISIBLE);
                 binding.furtherRecommendationsNoItems.setVisibility(View.GONE);
+                binding.latestScanResultsDivider.setOnClickListener(this::onLatestScanResultsClick);
 
                 setShoeViewData(binding.furtherRecommendationsShoes.shoeLeft, list.get(0));
                 setShoeViewData(binding.furtherRecommendationsShoes.shoeRight, list.get(1));

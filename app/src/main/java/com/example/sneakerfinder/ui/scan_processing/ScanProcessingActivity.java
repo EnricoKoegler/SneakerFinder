@@ -1,6 +1,10 @@
 package com.example.sneakerfinder.ui.scan_processing;
 
 import android.content.Intent;
+import android.graphics.drawable.Animatable2;
+import android.graphics.drawable.AnimatedVectorDrawable;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -10,7 +14,10 @@ import android.webkit.MimeTypeMap;
 
 import com.example.sneakerfinder.R;
 import com.example.sneakerfinder.databinding.ActivityScanProcessingBinding;
+import com.example.sneakerfinder.databinding.ViewShoeBinding;
+import com.example.sneakerfinder.db.entity.Shoe;
 import com.example.sneakerfinder.db.entity.ShoeScan;
+import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoe;
 import com.example.sneakerfinder.ui.scan_result.ProductActivity;
 import com.example.sneakerfinder.ui.similar_shoes.SimilarShoesActivity;
 import com.squareup.picasso.Picasso;
@@ -23,6 +30,7 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -77,6 +85,14 @@ public class ScanProcessingActivity extends AppCompatActivity {
     private final Observer<ShoeScan> recognitionStateObserver = shoeScan -> {
         Picasso.get().load("file://" + shoeScan.scanImageFilePath).into(binding.scanProcessingImage);
 
+        if (shoeScan.resultQuality != ShoeScan.RESULT_QUALITY_LOW) {
+            binding.scanProcessingSimilarPreview.getRoot().setVisibility(View.GONE);
+        }
+
+        if (shoeScan.resultQuality != ShoeScan.RESULT_QUALITY_PROCESSING) {
+            binding.searchAnim.setVisibility(View.GONE);
+        }
+
         switch (shoeScan.resultQuality) {
             case ShoeScan.RESULT_QUALITY_ERROR:
                 binding.scanProcessingTitle.setText(R.string.were_sorry);
@@ -93,6 +109,13 @@ public class ScanProcessingActivity extends AppCompatActivity {
                 binding.scanProcessingBar.setVisibility(View.VISIBLE);
                 binding.scanProcessingRetry.setVisibility(View.INVISIBLE);
                 binding.scanProcessingSimilar.setVisibility(View.INVISIBLE);
+
+                binding.searchAnim.setVisibility(View.VISIBLE);
+                binding.searchAnim.setImageResource(R.drawable.search_anim);
+                AnimatedVectorDrawable drawable = (AnimatedVectorDrawable) binding.searchAnim.getDrawable();
+
+                drawable.start();
+
                 break;
             case ShoeScan.RESULT_QUALITY_NO_RESULT:
                 binding.scanProcessingTitle.setText(R.string.were_sorry);
@@ -110,12 +133,27 @@ public class ScanProcessingActivity extends AppCompatActivity {
                 binding.scanProcessingRetry.setVisibility(View.VISIBLE);
                 binding.scanProcessingSimilar.setVisibility(View.VISIBLE);
 
-                binding.scanProcessingRetry.setOnClickListener(view -> finish());
-                binding.scanProcessingSimilar.setOnClickListener(view -> {
+                View.OnClickListener listener = view -> {
                     Intent intent = new Intent(this, SimilarShoesActivity.class);
                     intent.putExtra(ProductActivity.EXTRA_SHOE_SCAN_ID, shoeScan.shoeScanId);
                     startActivity(intent);
+                };
+
+                viewModel.getSimilarShoes(shoeScan.shoeScanId).observe(this, list -> {
+                    if (list.size() > 2 && shoeScan.resultQuality == ShoeScan.RESULT_QUALITY_LOW) {
+                        binding.scanProcessingSimilarPreview.getRoot().setVisibility(View.VISIBLE);
+                        binding.scanProcessingSimilarPreview.getRoot().setOnClickListener(listener);
+
+                        setShoeViewData(binding.scanProcessingSimilarPreview.shoeCenter, list.get(0));
+                        setShoeViewData(binding.scanProcessingSimilarPreview.shoeLeft, list.get(1));
+                        setShoeViewData(binding.scanProcessingSimilarPreview.shoeRight,list.get(2));
+                    } else {
+                        binding.scanProcessingSimilarPreview.getRoot().setVisibility(View.GONE);
+                    }
                 });
+
+                binding.scanProcessingRetry.setOnClickListener(view -> finish());
+                binding.scanProcessingSimilar.setOnClickListener(listener);
                 break;
             case ShoeScan.RESULT_QUALITY_HIGH:
                 if (productActivityAlreadyLaunched) return;
@@ -134,6 +172,13 @@ public class ScanProcessingActivity extends AppCompatActivity {
                 break;
         }
     };
+
+    private void setShoeViewData(ViewShoeBinding binding, ShoeScanResultWithShoe result) {
+        if (result.shoe != null) {
+            Shoe shoe = result.shoe;
+            if (shoe.thumbnailUrl != null) Picasso.get().load(shoe.thumbnailUrl).into(binding.shoeImage);
+        }
+    }
 
     private File createScanFile(Uri uri) throws IOException {
         String mimeType = getContentResolver().getType(uri);

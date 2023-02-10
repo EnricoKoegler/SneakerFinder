@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SneakersClassifier {
-    private static final String MODEL_FILENAME = "model_1673866803.tflite";
+    private static final String MODEL_FILENAME = "model.tflite";
     private static final String CLASS_LABELS = "class_labels.csv";
-    private static final int NUM_CLASSES = 147;
+    private static final int NUM_CLASSES = 127;
     private static SneakersClassifier sneakersClassifier;
 
     private final ImageProcessor imageProcessor;

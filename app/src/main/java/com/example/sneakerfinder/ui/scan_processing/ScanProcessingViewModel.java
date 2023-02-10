@@ -4,9 +4,11 @@ import android.app.Application;
 
 import com.example.sneakerfinder.db.entity.ShoeScan;
 import com.example.sneakerfinder.db.entity.ShoeScanResult;
+import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoe;
 import com.example.sneakerfinder.repo.ShoeRepository;
 
 import java.util.Date;
+import java.util.List;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -33,6 +35,10 @@ public class ScanProcessingViewModel extends AndroidViewModel {
 
     public LiveData<ShoeScanResult> getTopResult(long shoeScanId) {
         return shoeRepository.getTopResult(shoeScanId);
+    }
+
+    public LiveData<List<ShoeScanResultWithShoe>> getSimilarShoes(long shoeScanId) {
+        return shoeRepository.getSimilarShoes(shoeScanId);
     }
 
     public LiveData<ShoeScan> getCurrentShoeScan() {

@@ -22,6 +22,8 @@ public class ProductActivity extends AppCompatActivity {
     public static final String EXTRA_SHOE_SCAN_ID = "EXTRA_SHOE_SCAN_ID";
     public static final String EXTRA_SHOE_ID = "EXTRA_SHOE_ID";
 
+    public static final String EXTRA_SHOW_SIMILAR_SHOES = "EXTRA_SHOW_SIMILAR_SHOES";
+
     private ScanResultViewModel scanResultViewModel;
     private String onlineStoreUrl;
     private ActivityProductBinding binding;
@@ -37,6 +39,7 @@ public class ProductActivity extends AppCompatActivity {
         Intent i = getIntent();
         long shoeScanId = i.getLongExtra(EXTRA_SHOE_SCAN_ID, -1);
         long shoeId = i.getLongExtra(EXTRA_SHOE_ID, -1);
+        boolean showSimilarShoes = i.getBooleanExtra(EXTRA_SHOW_SIMILAR_SHOES, true);
 
         if (shoeScanId == -1 || shoeId == -1) {
             Log.e("IntentError", "Missing intent extras");
@@ -92,11 +95,16 @@ public class ProductActivity extends AppCompatActivity {
             binding.productdetailImageBack.setVisibility(View.GONE);
         });
 
-        binding.btnSimilarShoes.setOnClickListener(view -> {
-            Intent intent = new Intent(this, SimilarShoesActivity.class);
-            intent.putExtra(ProductActivity.EXTRA_SHOE_SCAN_ID, shoeScanId);
-            startActivity(intent);
-        });
+        if (showSimilarShoes) {
+            binding.btnSimilarShoes.setVisibility(View.VISIBLE);
+            binding.btnSimilarShoes.setOnClickListener(view -> {
+                Intent intent = new Intent(this, SimilarShoesActivity.class);
+                intent.putExtra(ProductActivity.EXTRA_SHOE_SCAN_ID, shoeScanId);
+                startActivity(intent);
+            });
+        } else {
+            binding.btnSimilarShoes.setVisibility(View.GONE);
+        }
 
         binding.btnBuyOnline.setOnClickListener(view -> {
             if (onlineStoreUrl != null) {
