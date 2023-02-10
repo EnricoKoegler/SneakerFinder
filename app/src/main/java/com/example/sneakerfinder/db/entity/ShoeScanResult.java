@@ -3,6 +3,12 @@ package com.example.sneakerfinder.db.entity;
 import androidx.room.Entity;
 import androidx.room.Index;
 
+/**
+ * The {@link ShoeScanResult} connects one-or-many {@link ShoeScan} to one-or-many {@link Shoe}
+ * (many-to-many relationship).
+ * This was especially hard to model in room, because there is no way in room to retrieve the
+ * additional attributes of a n-to-n-relation (here: confidence, isTopResult) with one entity.
+ */
 @Entity(
         primaryKeys = {"shoeId", "shoeScanId"},
         indices = {

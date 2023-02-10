@@ -23,6 +23,10 @@ import java.nio.MappedByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implements the classification of shoe images using a TensorFlow Lite model.
+ * The labels for the classes are given in a separate .csv file.
+ */
 public class SneakersClassifier {
     private static final String MODEL_FILENAME = "model.tflite";
     private static final String CLASS_LABELS = "class_labels.csv";
@@ -76,6 +80,7 @@ public class SneakersClassifier {
         // Map of labels and their corresponding probability
         TensorLabel labels = new TensorLabel(associatedAxisLabels, probabilityBuffer);
 
+        // Extract list of classification results
         List<ClassificationResult> classificationResults = new ArrayList<>();
         for (Category c: labels.getCategoryList()) {
             classificationResults.add(

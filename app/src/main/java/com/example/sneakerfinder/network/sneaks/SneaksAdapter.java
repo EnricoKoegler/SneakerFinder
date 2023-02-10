@@ -6,6 +6,10 @@ import com.example.sneakerfinder.network.sneaks.dto.SneaksProduct;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+/**
+ * Converts domain models from the SneaksAPI to internal domain models which can be stored in the
+ * {@link com.example.sneakerfinder.db.AppDb}.
+ */
 public class SneaksAdapter {
     private static final NumberFormat CURRENCY_FORMAT = NumberFormat.getCurrencyInstance(Locale.US);
 

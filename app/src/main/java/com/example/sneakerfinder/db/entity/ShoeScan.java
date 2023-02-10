@@ -6,6 +6,13 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+/**
+ * Shoe scan represents one single image that a user has either uploaded or captured using the
+ * phones camera. The result quality tells how good the top result of the shoe scan is.
+ * It also tells, if the shoe scan is still in progress which is especially used in the
+ * {@link com.example.sneakerfinder.ui.scan_processing.ScanProcessingActivity} to propagate
+ * the state of the scan to the view.
+ */
 @Entity
 public class ShoeScan implements Comparable<ShoeScan> {
     @PrimaryKey(autoGenerate = true) public long shoeScanId;

@@ -4,11 +4,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.drawable.AnimatedVectorDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,13 +21,11 @@ import com.example.sneakerfinder.helper.UIHelper;
 import com.example.sneakerfinder.ui.scan_processing.ScanProcessingActivity;
 import com.example.sneakerfinder.ui.scan_result.ProductActivity;
 import com.example.sneakerfinder.ui.similar_shoes.SimilarShoesActivity;
-import com.example.sneakerfinder.ui.similar_shoes.SimilarShoesAdapter;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -62,6 +57,7 @@ public class SavedResultsFragment extends Fragment implements SavedResultsAdapte
         listview.setAdapter(adapter);
         listview.setLayoutManager(new LinearLayoutManager(root.getContext()));
 
+        // Support swipe to delete
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -71,6 +67,7 @@ public class SavedResultsFragment extends Fragment implements SavedResultsAdapte
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 if (shoeScanWithShoeScanResults != null) {
+                    // Get shoe at swipe position
                     int adapterPosition = viewHolder.getAdapterPosition();
                     ShoeScanWithShoeScanResults results =
                             shoeScanWithShoeScanResults.get(adapterPosition);
@@ -79,12 +76,14 @@ public class SavedResultsFragment extends Fragment implements SavedResultsAdapte
                     String topResultName = null;
                     if (topResult != null && topResult.shoe != null) topResultName = topResult.shoe.name;
 
+                    // Show alert dialog for confirmation
                     AlertDialog alertDialog = new AlertDialog.Builder(requireActivity()).create();
                     alertDialog.setTitle("Do you really want to delete this scan result?");
                     if (topResultName != null)
                         alertDialog.setMessage(topResultName + " will be gone forever.");
                     alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
                             (dialog, which) -> {
+                                // Delete shoe
                                 savedResultsViewModel.deleteShoeScan(results.shoeScan.shoeScanId);
                                 dialog.dismiss();
                             });
@@ -96,6 +95,7 @@ public class SavedResultsFragment extends Fragment implements SavedResultsAdapte
                 }
             }
 
+            // Adds red background and icon for delete swipe.
             @Override
             public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 View itemView = viewHolder.itemView;
@@ -123,10 +123,11 @@ public class SavedResultsFragment extends Fragment implements SavedResultsAdapte
                 }
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
             }
-        }).attachToRecyclerView(listview);
+        }).attachToRecyclerView(listview); // attach ItemTouchHelper to recyclerview
 
         adapter.setItemClickListener(this);
 
+        // Displays saved results if present, placeholder otherwise
         savedResultsViewModel.getShoeScans().observe(getViewLifecycleOwner(), shoeScanWithShoeScanResults -> {
             if (shoeScanWithShoeScanResults.size() == 0) {
                 binding.latestScanResultsNoItems.setVisibility(View.VISIBLE);

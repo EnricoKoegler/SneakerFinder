@@ -10,6 +10,11 @@ import java.util.concurrent.TimeUnit;
 
 import androidx.core.os.HandlerCompat;
 
+/**
+ * Implements a {@link ThreadPoolExecutor} for background processing.
+ * Mainly used by {@link com.example.sneakerfinder.repo.ShoeRepository} to retrieve data from
+ * the {@link com.example.sneakerfinder.db.AppDb} or the {@link com.example.sneakerfinder.network.RestClient}.
+ */
 public class ThreadHelper {
     private static final int CORE_POOL_SIZE = 1;
     private static final int MAXIMUM_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 4;

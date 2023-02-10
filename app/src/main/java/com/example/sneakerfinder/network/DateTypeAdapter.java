@@ -1,5 +1,6 @@
 package com.example.sneakerfinder.network;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.google.gson.JsonDeserializationContext;
@@ -16,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DateTypeAdapter implements JsonSerializer<Date>, JsonDeserializer<Date> {
+    @SuppressLint("SimpleDateFormat")
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override

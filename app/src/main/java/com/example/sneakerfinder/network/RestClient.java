@@ -1,7 +1,5 @@
 package com.example.sneakerfinder.network;
 
-import android.content.Context;
-
 import com.example.sneakerfinder.BuildConfig;
 import com.example.sneakerfinder.network.aws.AWSConnection;
 import com.example.sneakerfinder.network.sneaks.AccessTokenInterceptor;
@@ -15,6 +13,9 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Provides access to the AWS backend and the SneaksAPI server.
+ */
 public class RestClient {
     private static RestClient instance;
 
@@ -22,8 +23,8 @@ public class RestClient {
 
     private final Retrofit retrofitSneaks;
 
-    public static RestClient getInstance(Context context) {
-        if (instance == null) instance = new RestClient(context);
+    public static RestClient getInstance() {
+        if (instance == null) instance = new RestClient();
         return instance;
     }
 
@@ -35,7 +36,7 @@ public class RestClient {
         return retrofitSneaks.create(SneaksConnection.class);
     }
 
-    private RestClient(Context context) {
+    private RestClient() {
         Gson gson = new GsonBuilder()
                 .serializeNulls()
                 .registerTypeAdapter(Date.class, new DateTypeAdapter())

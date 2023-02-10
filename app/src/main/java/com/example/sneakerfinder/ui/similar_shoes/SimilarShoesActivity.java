@@ -12,21 +12,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+/**
+ * This activity is used to display similar shoes AND shoe recommendations.
+ * If EXTRA_SHOE_SCAN_ID is given, similar shoes to the given shoe scan are displayed.
+ * Otherwise general recommendations are displayed.
+ */
 public class SimilarShoesActivity extends AppCompatActivity implements SimilarShoesAdapter.ItemClickListener {
     public static final String EXTRA_SHOE_SCAN_ID = "EXTRA_SHOE_SCAN_ID";
-    private FragmentSavedResultsBinding binding;
-
-    private SimilarShoesViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = FragmentSavedResultsBinding.inflate(getLayoutInflater());
+        com.example.sneakerfinder.databinding.FragmentSavedResultsBinding binding = FragmentSavedResultsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         Long shoeScanId = getIntent().getLongExtra(EXTRA_SHOE_SCAN_ID, -1);
         if (shoeScanId == -1) shoeScanId = null;
 
+        // EXTRA_SHOE_SCAN_ID determines the style of the activity
         ActivityStyle activityStyle;
         if (shoeScanId == null) activityStyle = ActivityStyle.RECOMMENDED_SHOES;
         else activityStyle = ActivityStyle.SIMILAR_SHOES;
@@ -39,7 +42,7 @@ public class SimilarShoesActivity extends AppCompatActivity implements SimilarSh
         binding.shoeListView.setLayoutManager(new LinearLayoutManager(this));
         adapter.setItemClickListener(this);
 
-        viewModel = new ViewModelProvider(
+        SimilarShoesViewModel viewModel = new ViewModelProvider(
                 this,
                 new SimilarShoesViewModel.Factory(getApplication(), shoeScanId)
         ).get(SimilarShoesViewModel.class);
@@ -47,6 +50,9 @@ public class SimilarShoesActivity extends AppCompatActivity implements SimilarSh
         viewModel.getSimilarShoes().observe(this, adapter::setItems);
     }
 
+    /**
+     * @param shoe for which the ProductActivity should be launched
+     */
     @Override
     public void onItemClicked(ShoeScanResultWithShoe shoe) {
         Intent i = new Intent(this, ProductActivity.class);

@@ -24,4 +24,22 @@
     <string name="further_recommendations_will_be_displayed_here">Further recommendations will be displayed here as soon as you have scanned your first shoes.</string>
     <string name="button_ok">OK</string>
     <string name="image_could_not_be_read_from_device">The image could not be read from your device.</string>
+    <string name="onboarding">Onboarding</string>
+    <string name="sneaker">Sneaker</string>
+    <string name="onboarding_slogan">It just takes \n 1 photo \n to get your \n favourite shoe</string>
+    <string name="get_started"><![CDATA[Get started >>]]></string>
+    <string name="tap_to_change">Tap to change</string>
+    <string name="accuracy">Accuracy</string>
+    <string name="your_scan_result">Your scan result:</string>
+    <string name="shoe_name">Shoe name</string>
+    <string name="current_price">Current price</string>
+    <string name="release_date">Release date</string>
+    <string name="buy_online">Buy online</string>
+    <string name="retry">Retry</string>
+    <string name="please_wait_while_the_scanner_is_starting">Please wait while the scanner is starting...</string>
+    <string name="error">Error</string>
+    <string name="tap_to_retry_recognition">Tap to retry recognition ...</string>
+    <string name="no_result">No result</string>
+    <string name="result_is_not_accurate">Result is not accurate</string>
+    <string name="tap_to_see_similar_shoes">Tap to see similar shoes ...</string>
 </resources>

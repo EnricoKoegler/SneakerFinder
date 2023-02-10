@@ -1,5 +1,11 @@
 package com.example.sneakerfinder.data;
 
+import androidx.annotation.NonNull;
+
+/**
+ * Represents one single result of the shoe classification. It contains a className (the shoes name)
+ * an accuracy as probability between 0% and 100% and an internal classId.
+ */
 public class ClassificationResult implements Comparable<ClassificationResult> {
     private final int classId;
     private final String className;
@@ -11,6 +17,7 @@ public class ClassificationResult implements Comparable<ClassificationResult> {
         this.accuracy = accuracy;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "ClassificationResult{" +

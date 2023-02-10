@@ -52,7 +52,7 @@ public class SavedResultsAdapter extends RecyclerView.Adapter<SavedResultsAdapte
     so that we can pass e.g. click events to the activity.
     */
     public interface ItemClickListener {
-        public void onItemClicked(ShoeScanWithShoeScanResults shoe);
+        void onItemClicked(ShoeScanWithShoeScanResults shoe);
     }
 
 
@@ -137,15 +137,15 @@ public class SavedResultsAdapter extends RecyclerView.Adapter<SavedResultsAdapte
 
                 switch (shoeScan.resultQuality) {
                     case ShoeScan.RESULT_QUALITY_ERROR:
-                        holder.titleText.setText("Error");
-                        holder.priceText.setText("Tap to retry recognition ...");
+                        holder.titleText.setText(R.string.error);
+                        holder.priceText.setText(R.string.tap_to_retry_recognition);
                         break;
                     case ShoeScan.RESULT_QUALITY_NO_RESULT:
-                        holder.titleText.setText("No result");
+                        holder.titleText.setText(R.string.no_result);
                         break;
                     case ShoeScan.RESULT_QUALITY_LOW:
-                        holder.titleText.setText("Result is not accurate");
-                        holder.priceText.setText("Tap to see similar shoes ...");
+                        holder.titleText.setText(R.string.result_is_not_accurate);
+                        holder.priceText.setText(R.string.tap_to_see_similar_shoes);
                         break;
                 }
             }

@@ -33,11 +33,10 @@ import static androidx.navigation.fragment.FragmentKt.findNavController;
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
-    private HomeViewModel viewModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        HomeViewModel viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -47,6 +46,7 @@ public class HomeFragment extends Fragment {
         binding.furtherRecommendationsNoItemsBtn.setOnClickListener(this::onCaptureBtnClick);
         binding.latestScanResultsNoItemsBtn.setOnClickListener(this::onCaptureBtnClick);
 
+        // Display latest scan results on HomeFragment
         viewModel.getShoeScans().observe(requireActivity(), list -> {
             ShoeScanResultWithShoe[] selection = new ShoeScanResultWithShoe[3];
             int count = 0;
@@ -86,6 +86,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        // Display recommended shoes on HomeFragment
         viewModel.getRecommendedShoes().observe(requireActivity(), list -> {
             if (list.size() < 2) {
                 //binding.furtherRecommendationsShoes.getRoot().setVisibility(View.GONE);
@@ -108,12 +109,18 @@ public class HomeFragment extends Fragment {
         findNavController(this).navigate(R.id.action_home_to_scanner);
     }
 
+    /**
+     * Launches Intent.ACTION_GET_CONTENT to get images from file system.
+     */
     private void onUploadBtnClick(View view) {
         Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
         fileIntent.setType("image/*");
         photoActivityResultLauncher.launch(fileIntent);
     }
 
+    /**
+     * Starts {@link ScanProcessingActivity} for classification of the uploaded photo.
+     */
     private final ActivityResultLauncher<Intent> photoActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {

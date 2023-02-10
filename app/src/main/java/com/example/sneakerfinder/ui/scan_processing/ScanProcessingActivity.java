@@ -1,10 +1,7 @@
 package com.example.sneakerfinder.ui.scan_processing;
 
 import android.content.Intent;
-import android.graphics.drawable.Animatable2;
 import android.graphics.drawable.AnimatedVectorDrawable;
-import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -30,7 +27,6 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -49,13 +45,18 @@ public class ScanProcessingActivity extends AppCompatActivity {
         binding = ActivityScanProcessingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // There are different ways this activity can be started:
         Intent i = getIntent();
         Uri imageUri = null;
         Long previousShoeScanId = null;
+
+        // Intent from outside of the app (e.g. photo gallery)
         if (i.getAction() != null && i.getAction().equals(Intent.ACTION_SEND)) {
             imageUri = i.getParcelableExtra(Intent.EXTRA_STREAM);
+        // Intent from ScannerFragment or HomeFragment containing shoe image data URI
         } else if (i.getData() != null) {
             imageUri = i.getData();
+        // Intent to retry shoe scan with errors
         } else if (i.getLongExtra("EXTRA_RETRY_SHOE_SCAN_ID", -1) != -1) {
             previousShoeScanId = i.getLongExtra("EXTRA_RETRY_SHOE_SCAN_ID", -1);
         } else {
@@ -65,8 +66,10 @@ public class ScanProcessingActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(ScanProcessingViewModel.class);
 
+        // Observe shoe scan progress
         viewModel.getCurrentShoeScan().observe(this, recognitionStateObserver);
 
+        // Start shoe classification
         if (imageUri != null) {
             try {
                 String imageFilePath = createScanFile(imageUri).getAbsolutePath();
@@ -80,9 +83,15 @@ public class ScanProcessingActivity extends AppCompatActivity {
         }
     }
 
+    // LiveData can emit the same object multiple times.
+    // The ProductActivity should only be launched once after a successful scan.
     private boolean productActivityAlreadyLaunched = false;
 
+    /**
+     * Observe currently processed ShoeScan and give information to the user.
+     */
     private final Observer<ShoeScan> recognitionStateObserver = shoeScan -> {
+        // Display image
         Picasso.get().load("file://" + shoeScan.scanImageFilePath).into(binding.scanProcessingImage);
 
         if (shoeScan.resultQuality != ShoeScan.RESULT_QUALITY_LOW) {
@@ -110,6 +119,7 @@ public class ScanProcessingActivity extends AppCompatActivity {
                 binding.scanProcessingRetry.setVisibility(View.INVISIBLE);
                 binding.scanProcessingSimilar.setVisibility(View.INVISIBLE);
 
+                // Display search animation
                 binding.searchAnim.setVisibility(View.VISIBLE);
                 binding.searchAnim.setImageResource(R.drawable.search_anim);
                 AnimatedVectorDrawable drawable = (AnimatedVectorDrawable) binding.searchAnim.getDrawable();
@@ -139,6 +149,7 @@ public class ScanProcessingActivity extends AppCompatActivity {
                     startActivity(intent);
                 };
 
+                // Display similar items preview
                 viewModel.getSimilarShoes(shoeScan.shoeScanId).observe(this, list -> {
                     if (list.size() > 2 && shoeScan.resultQuality == ShoeScan.RESULT_QUALITY_LOW) {
                         binding.scanProcessingSimilarPreview.getRoot().setVisibility(View.VISIBLE);
@@ -158,6 +169,7 @@ public class ScanProcessingActivity extends AppCompatActivity {
             case ShoeScan.RESULT_QUALITY_HIGH:
                 if (productActivityAlreadyLaunched) return;
 
+                // Launch ProductActivity
                 viewModel.getTopResult(shoeScan.shoeScanId).observe(this, result -> {
                     if (productActivityAlreadyLaunched) return;
                     if (result != null) {
@@ -180,6 +192,9 @@ public class ScanProcessingActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Stores each scan image locally on the users device for later retrieval.
+     */
     private File createScanFile(Uri uri) throws IOException {
         String mimeType = getContentResolver().getType(uri);
         // Copy file

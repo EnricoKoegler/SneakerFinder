@@ -11,6 +11,10 @@ import java.io.IOException;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 
+/**
+ * Interceptor for HTTP requests which adds an Authorization Header to every request made
+ * to the SneaksAPI.
+ */
 public class AccessTokenInterceptor implements Interceptor {
     private static AccessTokenInterceptor interceptor;
 

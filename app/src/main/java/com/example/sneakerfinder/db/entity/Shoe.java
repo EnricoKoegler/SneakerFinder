@@ -7,6 +7,12 @@ import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+/**
+ * Represents a single shoe model. Even though the shoe has an internal primary key, the styleId
+ * can also be used as unique identifier. The styleId is populated by the styleId which comes from
+ * the StockX api. Most of the additional fields are also populated during the shoe recognition
+ * process using the {@link com.example.sneakerfinder.network.sneaks.SneaksConnection}
+ */
 @Entity(indices = {@Index(value = {"styleId"}, unique = true)})
 public class Shoe {
     @PrimaryKey(autoGenerate = true) public long shoeId;

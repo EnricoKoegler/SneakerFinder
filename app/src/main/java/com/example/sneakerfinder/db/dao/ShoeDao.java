@@ -11,12 +11,14 @@ import java.util.List;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
 
+/**
+ * Dao to query shoe related information from the database.
+ */
 @Dao
 public abstract class ShoeDao {
     @Insert
@@ -61,6 +63,9 @@ public abstract class ShoeDao {
     @Query("SELECT * FROM ShoeScanResult WHERE shoeScanId = :shoeScanId AND isTopResult = 0 ORDER BY confidence DESC")
     public abstract LiveData<List<ShoeScanResultWithShoe>> getSimilarShoes(long shoeScanId);
 
+    /**
+     * Recommends shoes which are not the top result of a shoe scan, but still could be reasonable results.
+     */
     @Transaction
     @Query("SELECT * FROM ShoeScanResult r1 WHERE shoeScanId = (" +
             "SELECT shoeScanId FROM ShoeScanResult r2 " +

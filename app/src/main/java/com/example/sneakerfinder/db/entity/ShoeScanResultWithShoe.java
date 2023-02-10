@@ -3,6 +3,9 @@ package com.example.sneakerfinder.db.entity;
 import androidx.room.Embedded;
 import androidx.room.Relation;
 
+/**
+ * Helper model to query a {@link ShoeScanResult} with its associated shoe.
+ */
 public class ShoeScanResultWithShoe implements Comparable<ShoeScanResultWithShoe> {
     @Embedded public ShoeScanResult shoeScanResult;
     @Relation(

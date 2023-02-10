@@ -14,6 +14,7 @@ import com.example.sneakerfinder.ui.similar_shoes.SimilarShoesActivity;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
+import java.util.Locale;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -24,7 +25,6 @@ public class ProductActivity extends AppCompatActivity {
 
     public static final String EXTRA_SHOW_SIMILAR_SHOES = "EXTRA_SHOW_SIMILAR_SHOES";
 
-    private ScanResultViewModel scanResultViewModel;
     private String onlineStoreUrl;
     private ActivityProductBinding binding;
 
@@ -36,20 +36,24 @@ public class ProductActivity extends AppCompatActivity {
         binding.productdetailImageBack.setVisibility(View.GONE);
 
         // Get data from intent
+        // Product activity displays one Shoe from one ShoeScan.
         Intent i = getIntent();
         long shoeScanId = i.getLongExtra(EXTRA_SHOE_SCAN_ID, -1);
         long shoeId = i.getLongExtra(EXTRA_SHOE_ID, -1);
+
+        // Don't display similar shoe button when already coming from SimilarShoesActivity
         boolean showSimilarShoes = i.getBooleanExtra(EXTRA_SHOW_SIMILAR_SHOES, true);
 
         if (shoeScanId == -1 || shoeId == -1) {
             Log.e("IntentError", "Missing intent extras");
         }
 
-        scanResultViewModel = new ViewModelProvider(
+        ScanResultViewModel scanResultViewModel = new ViewModelProvider(
                 this,
                 new ScanResultViewModel.Factory(getApplication(), shoeScanId, shoeId)
         ).get(ScanResultViewModel.class);
 
+        // Observe scan result and set content for views
         scanResultViewModel.getShoeScanResult().observe(this, shoeScanResultWithShoeAndScan -> {
             Shoe shoe = shoeScanResultWithShoeAndScan.shoe;
             if (shoe != null) {
@@ -81,10 +85,11 @@ public class ProductActivity extends AppCompatActivity {
 
             ShoeScanResult result = shoeScanResultWithShoeAndScan.shoeScanResult;
             if (result != null) {
-                binding.productdetailAccuracy.setText(String.format("%.0f%%", result.confidence * 100));
+                binding.productdetailAccuracy.setText(String.format(Locale.getDefault(), "%.0f%%", result.confidence * 100));
             }
         });
 
+        // Add functionality to "turn" product image to see scan image.
         binding.productdetailImage.setOnClickListener(view -> {
                 binding.productdetailImage.setVisibility(View.GONE);
                 binding.productdetailImageBack.setVisibility(View.VISIBLE);

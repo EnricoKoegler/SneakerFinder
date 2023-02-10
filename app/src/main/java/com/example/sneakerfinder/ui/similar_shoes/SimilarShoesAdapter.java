@@ -16,6 +16,7 @@ import com.example.sneakerfinder.db.entity.ShoeScanResultWithShoe;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -71,9 +72,9 @@ public class SimilarShoesAdapter extends RecyclerView.Adapter<SimilarShoesAdapte
 
             if (shoeScanResult != null) {
                 if (activityStyle == SimilarShoesActivity.ActivityStyle.SIMILAR_SHOES)
-                    holder.descText.setText(String.format("Accuracy: %.0f%%", shoeScanResult.confidence * 100));
+                    holder.descText.setText(String.format(Locale.getDefault(), "Accuracy: %.0f%%", shoeScanResult.confidence * 100));
                 else
-                    holder.descText.setText(String.format("%.0f%% match", shoeScanResult.confidence * 100));
+                    holder.descText.setText(String.format(Locale.getDefault(), "%.0f%% match", shoeScanResult.confidence * 100));
                 holder.descText.setTypeface(null, Typeface.BOLD);
                 if(shoeScanResult.confidence > 0.0) holder.descText.setTextColor(Color.RED);
                 if(shoeScanResult.confidence > 0.1) holder.descText.setTextColor(Color.rgb(255, 165, 0));

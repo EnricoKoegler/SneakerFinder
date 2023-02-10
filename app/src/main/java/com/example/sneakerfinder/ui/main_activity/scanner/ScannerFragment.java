@@ -50,6 +50,9 @@ public class ScannerFragment extends Fragment {
         if (!scannerViewModel.isPhotoCaptureInProgress()) capturePhoto();
     }
 
+    /**
+     * Capture photo using the phones camera and store it in newly created file.
+     */
     private void capturePhoto() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         try {
@@ -84,6 +87,7 @@ public class ScannerFragment extends Fragment {
                 public void onActivityResult(ActivityResult result) {
                     scannerViewModel.setPhotoCaptureInProgress(false);
 
+                    // Start ScanProcessingActivity for shoe classification
                     if (result.getResultCode() == RESULT_OK) {
                         Intent i = new Intent(getActivity(), ScanProcessingActivity.class);
                         i.setData(photoUri);

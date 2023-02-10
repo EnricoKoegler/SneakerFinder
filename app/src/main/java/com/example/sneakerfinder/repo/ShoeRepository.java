@@ -39,6 +39,12 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Response;
 
+/**
+ * The {@link ShoeRepository} is the single-source-of-truth for the app.
+ * Here the {@link AppDb} is accessed and the {@link RestClient} is used to provide information
+ * to the different {@link androidx.lifecycle.ViewModel} of the app.
+ * Also the {@link SneakersClassifier} is used to make predictions locally on the users device.
+ */
 public class ShoeRepository {
     private final RestClient restClient;
 
@@ -46,8 +52,11 @@ public class ShoeRepository {
 
     private SneakersClassifier classifier;
 
+    /**
+     * Sets up all data-sources for the repository.
+     */
     public ShoeRepository(Application application) {
-        restClient = RestClient.getInstance(application);
+        restClient = RestClient.getInstance();
 
         AppDb appDb = AppDb.getDatabase(application);
         shoeDao = appDb.getShoeDao();
@@ -59,19 +68,45 @@ public class ShoeRepository {
         }
     }
 
+    // Parameters for shoe classification
     private static final boolean USE_ONLINE_RECOGNITION = false;
     private static final boolean USE_ONLINE_IMAGE_CROPPING = true;
 
+    /**
+     * Number of results to store in the {@link AppDb} for each successful classification.
+     */
     private static final int NUMBER_OF_RESULTS = 10;
+
+    /**
+     * These thresholds are used to estimate the quality of a {@link ShoeScan}.
+     * Therefore only the top-result of a {@link ShoeScan} is taken into account.
+     *
+     * Given a ShoeScan with accuracy p of the top result the result quality of the ShoeScan
+     * is determined like following:
+     *
+     * p < LOW_ACCURACY_THRESHOLD:                              ShoeScan.RESULT_QUALITY_NO_RESULT
+     * LOW_ACCURACY_THRESHOLD < p < HIGH_ACCURACY_THRESHOLD:    ShoeScan.RESULT_QUALITY_LOW
+     * HIGH_ACCURACY_THRESHOLD < p:                             ShoeScan.RESULT_QUALITY_HIGH
+     */
     private static final float LOW_ACCURACY_THRESHOLD = 0.2f;
     private static final float HIGH_ACCURACY_THRESHOLD = 0.5f;
 
+    /**
+     * Holds information about the current shoeScan which is given to the UI as progress indicator.
+     */
     private final MutableLiveData<ShoeScan> currentShoeScan = new MutableLiveData<>();
 
+    /**
+     * @return LiveData of the current processed {@link ShoeScan}.
+     */
     public LiveData<ShoeScan> getCurrentShoeScan() {
         return currentShoeScan;
     }
 
+    /**
+     * @param shoeScan to be stored in the database. Afterwards the recognition process is
+     *                 started for this ShoeScan.
+     */
     public void storeShoeScanAndRecognizeShoe(ShoeScan shoeScan) {
         ThreadHelper.getExecutor().execute(() -> {
             shoeScan.resultQuality = ShoeScan.RESULT_QUALITY_ERROR;
@@ -81,22 +116,33 @@ public class ShoeRepository {
         });
     }
 
+    /**
+     * @param shoeScanId for which the recognition should be done.
+     *
+     * No shoe scan is inserted in the database here, but the existing shoe scan gets updated
+     * accordingly.
+     */
     public void retryShoeScan(long shoeScanId) {
         ThreadHelper.getExecutor().execute(() -> {
             ShoeScan shoeScan = shoeDao.getShoeScanById(shoeScanId);
 
             if (shoeScan == null) {
+                // Provide information for the UI
                 ShoeScan fakeShoeScan = new ShoeScan();
                 fakeShoeScan.resultQuality = ShoeScan.RESULT_QUALITY_ERROR;
                 currentShoeScan.postValue(fakeShoeScan);
             } else if (shoeScan.resultQuality == ShoeScan.RESULT_QUALITY_ERROR) {
                 recognizeShoe(shoeScan);
             } else {
+                // Use postValue instead of setValue because of background thread
                 currentShoeScan.postValue(shoeScan);
             }
         });
     }
 
+    /**
+     * @param shoeScan to perform the recognition for
+     */
     private void recognizeShoe(ShoeScan shoeScan) {
         shoeScan.resultQuality = ShoeScan.RESULT_QUALITY_PROCESSING;
         currentShoeScan.postValue(shoeScan);
@@ -141,6 +187,8 @@ public class ShoeRepository {
         else shoeScan.resultQuality = ShoeScan.RESULT_QUALITY_HIGH;
 
         try {
+            // Tries to find information for all the Sneakers using the API
+            // and inserting the found information into the database.
             if (topResultAccuracy > LOW_ACCURACY_THRESHOLD) {
                 for (int i = 0; i < NUMBER_OF_RESULTS; i++) {
                     ClassificationResult clResult = classificationResults.get(i);
@@ -160,9 +208,15 @@ public class ShoeRepository {
 
         shoeDao.updateShoeScan(shoeScan);
 
+        // Successful recognition, give result to UI
         currentShoeScan.postValue(shoeScan);
     }
 
+    /**
+     * Processes one single classification result.
+     * Looks for additional data and inserts everything into the database.
+     * @throws IOException if the server is not reachable
+     */
     private void processRecognitionResult(long shoeScanId, String shoeName,
                                           float confidence, boolean isTopResult) throws IOException {
         try {
@@ -180,6 +234,11 @@ public class ShoeRepository {
         }
     }
 
+    /**
+     * @param bitmap to be cropped online
+     * @return cropped bitmap
+     * @throws IOException if the server is not accessible
+     */
     private Bitmap cropImageOnline(Bitmap bitmap) throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, IMAGE_QUALITY, stream);
@@ -203,6 +262,9 @@ public class ShoeRepository {
         return BitmapFactory.decodeByteArray(data, 0, data.length);
     }
 
+    /**
+     * Was earlier used to perform shoe classification online.
+     */
     private List<ClassificationResult> recognizeShoeOnline(Bitmap bitmap) throws IOException, NotFoundException {
         throw new IOException();
         /*bitmap = rescaleBitmap(bitmap);
@@ -228,12 +290,23 @@ public class ShoeRepository {
         return classificationResults;*/
     }
 
+    /**
+     * @param bitmap to be classified
+     * @return list of results of the classification
+     * @throws NotFoundException if the classifier was not found/initialized correctly
+     */
     private List<ClassificationResult> recognizeShoeOffline(Bitmap bitmap) throws NotFoundException {
         if (classifier == null) throw new NotFoundException();
 
         return classifier.classify(bitmap);
     }
 
+    /**
+     * @param searchString e.g. shoes name
+     * @return first {@link Shoe} matching the searchString
+     * @throws IOException if server could not be accessed
+     * @throws NotFoundException is no shoe was found for the given searchString
+     */
     @NonNull
     private Shoe searchShoe(String searchString) throws IOException, NotFoundException {
         Response<List<SneaksProduct>> response =
@@ -249,6 +322,7 @@ public class ShoeRepository {
         return SneaksAdapter.getShoe(sneaksProducts.get(0));
     }
 
+    // Bitmap rescaling, used for online shoe recognition
     public static final int IMAGE_PIXELS = 5 * 1024 * 1024;
     public static final int IMAGE_QUALITY = 80;
 
@@ -262,6 +336,12 @@ public class ShoeRepository {
         );
     }
 
+    /**
+     * @return list of all {@link ShoeScanWithShoeScanResults} from the database.
+     *
+     * This mapping necessary because room doesn't support additional attributes for
+     * n-to-n relationships.
+     */
     public LiveData<List<ShoeScanWithShoeScanResults>> getShoeScansWithShoeScanResults() {
         return Transformations.map(shoeDao.getShoeScanResultsWithShoesAndScans(), scanResultList -> {
             Map<ShoeScan, List<ShoeScanResultWithShoe>> map = new HashMap<>();
@@ -288,10 +368,6 @@ public class ShoeRepository {
         });
     }
 
-    public LiveData<List<ShoeScanResultWithShoe>> getShoeScanResults(long shoeScanId) {
-        return shoeDao.getShoeScanResultsWithShoes(shoeScanId);
-    }
-
     public LiveData<List<ShoeScanResultWithShoe>> getSimilarShoes(long shoeScanId) {
         return shoeDao.getSimilarShoes(shoeScanId);
     }
@@ -310,10 +386,5 @@ public class ShoeRepository {
 
     public void deleteShoeScanAndResults(long shoeScanId) {
         ThreadHelper.getExecutor().execute(() -> shoeDao.deleteShoeScanAndResults(shoeScanId));
-    }
-
-    public interface ShoeRecognitionCallback {
-        void onRecognitionComplete(ShoeScan shoeScan);
-        void onError(ShoeScan shoeScan);
     }
 }

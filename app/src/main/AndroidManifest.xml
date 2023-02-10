@@ -22,27 +22,17 @@
             android:name=".SplashActivity"
             android:theme="@style/Theme.SneakerFinder.NoActionBar"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity
-            android:name=".OnboardingActivity"
+            android:name=".ui.OnboardingActivity"
             android:exported="true"
-            android:label="@string/title_activity_main"
             android:theme="@style/Theme.SneakerFinder.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
         </activity>
         <activity
             android:name=".ui.main_activity.MainActivity"
@@ -53,7 +43,7 @@
         <activity
             android:name=".ui.scan_result.ProductActivity"
             android:exported="false"
-            android:label="@string/title_activity_main"
+            android:label="@string/sneaker"
             android:theme="@style/Theme.SneakerFinder.NoActionBar">
         </activity>
         <activity
@@ -70,7 +60,7 @@
         <activity
             android:name=".ui.similar_shoes.SimilarShoesActivity"
             android:exported="false"
-            android:label="@string/title_activity_main"
+            android:label="@string/similar_shoes"
             android:theme="@style/Theme.SneakerFinder.NoActionBar">
         </activity>
 
