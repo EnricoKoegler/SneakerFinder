@@ -118,7 +118,12 @@ public class SavedResultsAdapter extends RecyclerView.Adapter<SavedResultsAdapte
             if (scanDate != null)
                 holder.descText.setText(DATE_FORMAT.format(scanDate));
 
+            Resources res = holder.itemView.getContext().getResources();
+
             if (shoeScan.resultQuality == ShoeScan.RESULT_QUALITY_HIGH) {
+                holder.titleText.setTextColor(res.getColor(R.color.black));
+                holder.shoeDrillDown.setVisibility(View.VISIBLE);
+
                 ShoeScanResultWithShoe topResult = scanWithScanResults.shoeScanResults.get(0);
                 if (topResult != null && topResult.shoe != null) {
                     Shoe shoe = topResult.shoe;
@@ -131,8 +136,8 @@ public class SavedResultsAdapter extends RecyclerView.Adapter<SavedResultsAdapte
                 else Picasso.get().load("file://" + shoeScan.scanImageFilePath).into(holder.img);
 
                 if (!(shoeScan.resultQuality == ShoeScan.RESULT_QUALITY_LOW)) holder.shoeDrillDown.setVisibility(View.GONE);
+                else holder.shoeDrillDown.setVisibility(View.VISIBLE);
 
-                Resources res = holder.itemView.getContext().getResources();
                 holder.titleText.setTextColor(res.getColor(R.color.red));
 
                 switch (shoeScan.resultQuality) {
