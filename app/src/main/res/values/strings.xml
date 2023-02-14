@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SneakerFinder</string>
+    <string name="app_name">Sneakers Finder</string>
     <string name="title_activity_onboarding">Onboarding</string>
     <string name="title_home">Home</string>
     <string name="title_saved_results">Scan Results</string>
